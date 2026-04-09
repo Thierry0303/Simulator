@@ -3,1031 +3,1342 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Outseer | Frictionless ROI Calculator</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<title>Outseer | 3DS Frictionless ROI Calculator</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
+/* ── TOKENS ── */
 :root {
-  --navy:    #08182e;
-  --navy-1:  #0d2240;
-  --navy-2:  #152f52;
-  --teal:    #00c4bc;
-  --teal-d:  #008f89;
-  --teal-g:  rgba(0,196,188,0.12);
-  --amber:   #f59e0b;
-  --red:     #ef4444;
-  --green:   #22c55e;
-  --white:   #f0f6ff;
-  --muted:   #7a9bbf;
-  --border:  rgba(0,196,188,0.15);
-  --card:    rgba(13,34,64,0.75);
-  --font-h:  'Syne', sans-serif;
-  --font-m:  'IBM Plex Mono', monospace;
-  --font-b:  'DM Sans', sans-serif;
+  --bg:       #f4f6f9;
+  --surface:  #ffffff;
+  --surface2: #f8fafc;
+  --navy:     #0a1628;
+  --navy2:    #162440;
+  --teal:     #007a74;
+  --teal-l:   #00b5ab;
+  --teal-xl:  #e6f5f4;
+  --amber:    #c27d00;
+  --amber-l:  #fff8e6;
+  --red:      #c0392b;
+  --red-l:    #fdf0ee;
+  --green:    #1a6b3a;
+  --green-l:  #eaf5ef;
+  --border:   #e2e8f0;
+  --border2:  #d0dae6;
+  --text:     #0f2137;
+  --text2:    #4a6080;
+  --text3:    #8aa0bc;
+  --font:     'Plus Jakarta Sans', sans-serif;
+  --mono:     'JetBrains Mono', monospace;
+  --radius:   12px;
+  --shadow:   0 1px 3px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.04);
+  --shadow2:  0 2px 8px rgba(0,0,0,0.08), 0 8px 32px rgba(0,0,0,0.06);
 }
+
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
 
 body {
-  background: var(--navy);
-  color: var(--white);
-  font-family: var(--font-b);
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
   min-height: 100vh;
-  overflow-x: hidden;
+  font-size: 14px;
+  line-height: 1.5;
 }
-
-/* grid bg */
-body::before {
-  content: '';
-  position: fixed; inset: 0; z-index: 0; pointer-events: none;
-  background-image:
-    linear-gradient(rgba(0,196,188,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,196,188,0.03) 1px, transparent 1px);
-  background-size: 44px 44px;
-}
-
-/* ambient glow */
-.glow {
-  position: fixed; border-radius: 50%; filter: blur(110px);
-  pointer-events: none; z-index: 0;
-}
-.glow-1 { width:600px; height:600px; background:radial-gradient(circle,rgba(0,196,188,0.09),transparent 70%); top:-120px; right:-100px; }
-.glow-2 { width:500px; height:500px; background:radial-gradient(circle,rgba(0,80,180,0.07),transparent 70%); bottom:5%; left:-120px; }
 
 /* ── NAV ── */
 nav {
-  position: sticky; top: 0; z-index: 100;
-  background: rgba(8,24,46,0.95); backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 0 40px; height: 60px;
+  background: var(--navy);
+  padding: 0 32px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 .nav-brand {
-  display: flex; align-items: center; gap: 10px;
-  font-family: var(--font-h); font-weight: 800; font-size: 1rem;
-  color: var(--white); text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
 }
 .nav-logo {
-  width: 28px; height: 28px; border-radius: 6px;
-  background: linear-gradient(135deg, var(--teal), var(--teal-d));
-  display: flex; align-items: center; justify-content: center;
-  font-size: 0.65rem; font-weight: 800; color: var(--navy);
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, var(--teal-l), var(--teal));
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.6rem;
+  font-weight: 800;
+  color: white;
+  letter-spacing: 0.03em;
 }
-.nav-pill {
-  background: rgba(0,196,188,0.08); border: 1px solid var(--teal);
-  border-radius: 100px; padding: 4px 14px;
-  font-size: 0.72rem; font-family: var(--font-m); color: var(--teal);
-  letter-spacing: 0.02em;
+.nav-name {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: white;
+  letter-spacing: -0.01em;
 }
-
-/* ── HERO ── */
-.hero {
-  position: relative; z-index: 1;
-  padding: 56px 40px 48px;
-  border-bottom: 1px solid var(--border);
-  display: flex; align-items: flex-end; justify-content: space-between;
-  flex-wrap: wrap; gap: 28px;
-}
-.hero-eyebrow {
-  display: inline-flex; align-items: center; gap: 8px;
-  background: rgba(0,196,188,0.08); border: 1px solid rgba(0,196,188,0.25);
-  border-radius: 100px; padding: 5px 14px;
-  font-size: 0.72rem; font-weight: 600; font-family: var(--font-m);
-  color: var(--teal); letter-spacing: 0.04em; text-transform: uppercase;
-  margin-bottom: 16px;
-}
-.hero-eyebrow-dot {
-  width: 6px; height: 6px; border-radius: 50%; background: var(--teal);
-  animation: blink 2s infinite;
-}
-@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
-
-.hero h1 {
-  font-family: var(--font-h); font-size: clamp(1.8rem, 3.5vw, 2.8rem);
-  font-weight: 800; line-height: 1.1; color: var(--white);
-}
-.hero h1 em { font-style: normal; color: var(--teal); }
-.hero-sub {
-  color: var(--muted); margin-top: 12px; max-width: 540px;
-  font-size: 0.92rem; font-weight: 300; line-height: 1.65;
+.nav-badge {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--teal-l);
+  background: rgba(0,181,171,0.15);
+  border: 1px solid rgba(0,181,171,0.3);
+  border-radius: 100px;
+  padding: 3px 10px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
-/* Big total card */
-.total-card {
-  background: linear-gradient(135deg, rgba(0,196,188,0.1), rgba(0,196,188,0.04));
-  border: 1px solid rgba(0,196,188,0.3);
-  border-radius: 20px; padding: 28px 32px;
-  min-width: 240px; text-align: center; flex-shrink: 0;
-  position: relative; overflow: hidden;
-}
-.total-card::before {
-  content: ''; position: absolute; top: -40px; left: 50%; transform: translateX(-50%);
-  width: 200px; height: 200px;
-  background: radial-gradient(circle, rgba(0,196,188,0.12), transparent 70%);
-  pointer-events: none;
-}
-.total-card-label {
-  font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em;
-  color: var(--muted); margin-bottom: 8px; position: relative;
-}
-.total-card-amount {
-  font-family: var(--font-h); font-size: 2.6rem; font-weight: 800;
-  color: var(--teal); line-height: 1; position: relative;
-  transition: all 0.4s;
-}
-.total-card-sub {
-  font-size: 0.7rem; color: var(--muted); margin-top: 8px; position: relative;
-}
-
-/* ── MAIN GRID ── */
-.page { position: relative; z-index: 1; max-width: 1280px; margin: 0 auto; padding: 40px; }
-
-.calc-grid {
+/* ── PAGE SHELL ── */
+.shell {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 32px 32px 80px;
   display: grid;
-  grid-template-columns: 440px 1fr;
+  grid-template-columns: 1fr 380px;
   gap: 24px;
   align-items: start;
-}
-
-/* ── PANEL ── */
-.panel {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 16px;
+  /* ensure children cannot bleed outside their column */
   overflow: hidden;
 }
-.panel-head {
-  display: flex; align-items: center; gap: 10px;
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--border);
-  background: rgba(255,255,255,0.02);
-}
-.panel-head-icon { font-size: 1rem; }
-.panel-head-title {
-  font-family: var(--font-h); font-size: 0.78rem; font-weight: 700;
-  text-transform: uppercase; letter-spacing: 0.08em; color: var(--teal);
-}
-.panel-body { padding: 20px; display: flex; flex-direction: column; gap: 0; }
 
-/* ── SLIDERS ── */
-.ctrl-row { padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
-.ctrl-row:last-child { border-bottom: none; }
-.ctrl-header {
-  display: flex; justify-content: space-between; align-items: baseline;
+/* ── PAGE TITLE ── */
+.page-title-block {
+  grid-column: 1 / -1;
+  padding-bottom: 8px;
+}
+.page-eyebrow {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--teal);
   margin-bottom: 8px;
 }
-.ctrl-label { font-size: 0.8rem; color: var(--muted); line-height: 1.4; }
-.ctrl-label span { font-size: 0.72rem; }
-.ctrl-val {
-  font-family: var(--font-m); font-size: 0.82rem; font-weight: 500;
-  color: var(--white); background: rgba(0,196,188,0.08);
-  border: 1px solid rgba(0,196,188,0.15); border-radius: 6px;
-  padding: 2px 8px; white-space: nowrap; flex-shrink: 0;
+.page-title {
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
+  font-weight: 800;
+  color: var(--navy);
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  margin-bottom: 6px;
 }
+.page-sub {
+  font-size: 0.88rem;
+  color: var(--text2);
+  font-weight: 400;
+  max-width: 620px;
+}
+
+/* ── LEFT: STEPPED SECTIONS ── */
+.steps { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+
+/* Step card */
+.step-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.step-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 24px;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s;
+}
+.step-header:hover { background: var(--surface2); }
+
+.step-num {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--teal-xl);
+  color: var(--teal);
+  font-size: 0.75rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.2s, color 0.2s;
+}
+.step-card.active .step-num {
+  background: var(--teal);
+  color: white;
+}
+.step-card.done .step-num {
+  background: var(--green-l);
+  color: var(--green);
+}
+
+.step-title-block { flex: 1; }
+.step-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--navy);
+  letter-spacing: -0.01em;
+}
+.step-subtitle {
+  font-size: 0.75rem;
+  color: var(--text3);
+  margin-top: 1px;
+}
+
+.step-chevron {
+  font-size: 0.8rem;
+  color: var(--text3);
+  transition: transform 0.2s;
+}
+.step-card.active .step-chevron { transform: rotate(180deg); }
+
+.step-body {
+  display: none;
+  padding: 0 24px 20px;
+  border-top: 1px solid var(--border);
+}
+.step-card.active .step-body { display: block; }
+
+/* ── INPUTS ── */
+.field-group { display: flex; flex-direction: column; gap: 0; }
+
+.field {
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+.field:last-child { border-bottom: none; }
+
+.field-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 2px;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.field-hint {
+  font-size: 0.72rem;
+  color: var(--text3);
+  font-weight: 400;
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.field-val {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--teal);
+  background: var(--teal-xl);
+  border: 1px solid rgba(0,122,116,0.2);
+  border-radius: 6px;
+  padding: 2px 8px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.field-val.amber {
+  color: var(--amber);
+  background: var(--amber-l);
+  border-color: rgba(194,125,0,0.2);
+}
+
 input[type=range] {
-  width: 100%; height: 4px;
-  -webkit-appearance: none; appearance: none;
-  background: rgba(255,255,255,0.1); border-radius: 2px;
-  cursor: pointer; outline: none;
+  width: 100%;
+  height: 5px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: var(--border2);
+  border-radius: 3px;
+  cursor: pointer;
+  outline: none;
 }
 input[type=range]::-webkit-slider-thumb {
   -webkit-appearance: none;
-  width: 16px; height: 16px; border-radius: 50%;
-  background: var(--teal); border: 2px solid var(--navy);
-  cursor: pointer; transition: transform 0.15s, box-shadow 0.15s;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--teal);
+  border: 2px solid white;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
 }
 input[type=range]::-webkit-slider-thumb:hover {
-  transform: scale(1.25);
-  box-shadow: 0 0 0 6px rgba(0,196,188,0.15);
+  transform: scale(1.2);
+  box-shadow: 0 0 0 5px rgba(0,122,116,0.15);
 }
 input[type=range]::-moz-range-thumb {
-  width: 16px; height: 16px; border-radius: 50%;
-  background: var(--teal); border: 2px solid var(--navy); cursor: pointer;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--teal); border: 2px solid white; cursor: pointer;
 }
 
-/* Select */
-.ctrl-select {
-  width: 100%; background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.1);
-  color: var(--white); font-family: var(--font-b); font-size: 0.82rem;
-  padding: 9px 12px; border-radius: 8px; cursor: pointer; outline: none;
-  transition: border-color 0.2s; margin-top: 6px;
+select.field-select {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 0.82rem;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  margin-top: 4px;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%238aa0bc' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 32px;
 }
-.ctrl-select:hover, .ctrl-select:focus { border-color: var(--teal); }
-.ctrl-select option { background: #0d2240; }
+select.field-select:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(0,122,116,0.12); }
 
-/* Section separator in panel */
-.panel-sep {
-  margin: 4px -20px 0;
+/* Section divider within step */
+.section-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 0 8px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text3);
+}
+.section-divider::after {
+  content: '';
+  flex: 1;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(0,196,188,0.2), transparent);
-}
-.panel-section-title {
-  font-family: var(--font-h); font-size: 0.7rem; font-weight: 700;
-  text-transform: uppercase; letter-spacing: 0.09em; color: var(--teal);
-  padding: 14px 0 4px; display: flex; align-items: center; gap: 6px;
+  background: var(--border);
 }
 
-/* IC info box */
-.ic-info {
-  background: rgba(0,196,188,0.05); border: 1px solid rgba(0,196,188,0.15);
-  border-radius: 8px; padding: 10px 14px; margin-top: 12px;
-  font-size: 0.73rem; color: var(--muted); line-height: 1.6;
+/* Inline derived summary box */
+.derived-box {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-top: 10px;
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
 }
-.ic-info strong { color: var(--white); }
+.derived-box.teal { background: var(--teal-xl); border-color: rgba(0,122,116,0.2); }
+.derived-box.amber { background: var(--amber-l); border-color: rgba(194,125,0,0.15); }
+.derived-item-label {
+  font-size: 0.67rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text3);
+  margin-bottom: 2px;
+}
+.derived-item-val {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--teal);
+}
+.derived-item-val.amber { color: var(--amber); }
 
-/* ── RIGHT COLUMN ── */
-.right-col { display: flex; flex-direction: column; gap: 20px; }
+/* ── RIGHT: STICKY RESULTS ── */
+.results-sidebar {
+  position: sticky;
+  top: 76px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+  width: 100%;
+  /* No max-height/overflow — let it be as tall as content needs.
+     align-self:start on the element ensures sticky stops at left col end. */
+}
 
-/* Summary stats strip */
-.stats-strip {
-  display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+/* Big total */
+.result-hero {
+  background: var(--navy);
+  border-radius: var(--radius);
+  padding: 28px 24px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
 }
-.stat-card {
-  background: var(--card); border: 1px solid var(--border);
-  border-radius: 12px; padding: 16px;
-  transition: border-color 0.25s;
+.result-hero::before {
+  content: '';
+  position: absolute;
+  top: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 240px;
+  height: 240px;
+  background: radial-gradient(circle, rgba(0,181,171,0.15), transparent 70%);
+  pointer-events: none;
 }
-.stat-card:hover { border-color: rgba(0,196,188,0.3); }
-.stat-card-label {
-  font-size: 0.67rem; text-transform: uppercase; letter-spacing: 0.07em;
-  color: var(--muted); margin-bottom: 6px;
+.result-hero-label {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: rgba(255,255,255,0.4);
+  margin-bottom: 10px;
+  position: relative;
 }
-.stat-card-val {
-  font-family: var(--font-h); font-size: 1.15rem; font-weight: 800;
+.result-hero-amount {
+  font-size: 2.8rem;
+  font-weight: 800;
+  color: white;
   line-height: 1;
+  position: relative;
+  letter-spacing: -0.03em;
+  transition: all 0.4s cubic-bezier(.4,0,.2,1);
 }
-.stat-card-sub { font-size: 0.67rem; color: var(--muted); margin-top: 4px; }
+.result-hero-sub {
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.35);
+  margin-top: 8px;
+  position: relative;
+}
 
-/* Breakdown table */
-.breakdown-panel { }
-.breakdown-row {
+/* KPI strip */
+.kpi-strip {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.kpi-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.15s;
+}
+.kpi-row:last-child { border-bottom: none; }
+.kpi-row:hover { background: var(--surface2); }
+.kpi-label {
+  font-size: 0.77rem;
+  color: var(--text2);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.kpi-icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  flex-shrink: 0;
+}
+.kpi-val {
+  font-family: var(--mono);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--navy);
+  text-align: right;
+}
+.kpi-sub {
+  font-size: 0.66rem;
+  color: var(--text3);
+  text-align: right;
+  margin-top: 1px;
+}
+
+/* Breakdown list */
+.breakdown-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.breakdown-head {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface2);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--text2);
+}
+.bd-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 18px;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.15s;
+}
+.bd-item:last-child { border-bottom: none; }
+.bd-item:hover { background: var(--surface2); }
+.bd-item-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+.bd-item-text { flex: 1; min-width: 0; }
+.bd-item-name {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--navy);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.bd-item-sub {
+  font-size: 0.67rem;
+  color: var(--text3);
+  margin-top: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.bd-item-amt {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--teal);
+  white-space: nowrap;
+  text-align: right;
+}
+.bd-total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 18px;
+  background: var(--navy);
+}
+.bd-total-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.7);
+}
+.bd-total-amt {
+  font-family: var(--mono);
+  font-size: 1rem;
+  font-weight: 700;
+  color: white;
+}
+
+/* Detection rate summary card */
+.det-rate-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 16px 18px;
+}
+.det-rate-head {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--text2);
+  margin-bottom: 12px;
+}
+.det-rate-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.det-rate-label {
+  font-size: 0.75rem;
+  color: var(--text2);
+  width: 80px;
+  flex-shrink: 0;
+}
+.det-rate-bar-track {
+  flex: 1;
+  height: 8px;
+  background: var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.det-rate-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.5s cubic-bezier(.4,0,.2,1);
+}
+.det-rate-val {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  font-weight: 600;
+  width: 44px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* Methodology note */
+.method-note {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  font-size: 0.72rem;
+  color: var(--text2);
+  line-height: 1.65;
+}
+.method-note strong { color: var(--navy); }
+
+/* ── COMPETITOR SECTION ── */
+.comp-section {
+  grid-column: 1 / -1;
+  margin-top: 24px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.comp-section-head {
+  padding: 20px 28px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.comp-section-title {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--navy);
+  letter-spacing: -0.01em;
+}
+.comp-section-sub {
+  font-size: 0.78rem;
+  color: var(--text2);
+  margin-top: 2px;
+}
+.comp-badge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--teal);
+  background: var(--teal-xl);
+  border: 1px solid rgba(0,122,116,0.2);
+  border-radius: 100px;
+  padding: 4px 12px;
+}
+.comp-body {
+  padding: 24px 28px;
   display: grid;
-  grid-template-columns: 32px 1fr auto;
-  align-items: center; gap: 12px;
-  padding: 13px 20px;
-  border-bottom: 1px solid rgba(255,255,255,0.04);
-  transition: background 0.2s;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
 }
-.breakdown-row:last-child { border-bottom: none; }
-.breakdown-row:hover { background: rgba(255,255,255,0.02); }
+.comp-col-card {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.comp-col-card.rival { border-color: rgba(192,57,43,0.2); }
+.comp-col-card.outseer { border-color: rgba(0,122,116,0.25); }
+.comp-col-head-inner {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.comp-col-card.rival .comp-col-head-inner { background: var(--red-l); }
+.comp-col-card.outseer .comp-col-head-inner { background: var(--teal-xl); }
+.comp-col-name {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--navy);
+}
+.comp-col-name.rival { color: var(--red); }
+.comp-col-name.outseer { color: var(--teal); }
+.comp-col-inputs { padding: 14px 16px; display: flex; flex-direction: column; gap: 0; }
 
-.breakdown-row.total-row {
-  background: rgba(0,196,188,0.06);
-  border-top: 1px solid rgba(0,196,188,0.2);
-  padding: 16px 20px;
+.comp-delta-row {
+  padding: 16px 28px;
+  border-top: 1px solid var(--border);
+  display: grid;
+  grid-template-columns: repeat(4,1fr);
+  gap: 16px;
+  background: var(--surface2);
 }
-.bd-icon { font-size: 1.1rem; text-align: center; }
-.bd-text {}
-.bd-name { font-size: 0.83rem; font-weight: 600; color: var(--white); }
-.bd-sub  { font-size: 0.71rem; color: var(--muted); margin-top: 2px; line-height: 1.4; }
-.bd-amount {
-  font-family: var(--font-h); font-size: 0.95rem; font-weight: 700;
-  color: var(--teal); text-align: right; white-space: nowrap;
+.comp-delta-cell {
+  text-align: center;
+  padding: 14px 10px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface);
 }
-.bd-amount.green { color: var(--green); }
-.bd-amount.total { font-size: 1.2rem; color: var(--teal); }
-
-/* Bar chart */
-.chart-rows { display: flex; flex-direction: column; gap: 10px; padding: 20px; }
-.bar-row {}
-.bar-header {
-  display: flex; justify-content: space-between; align-items: baseline;
+.comp-delta-cell.positive { background: var(--green-l); border-color: rgba(26,107,58,0.2); }
+.comp-delta-cell.negative { background: var(--red-l); border-color: rgba(192,57,43,0.2); }
+.comp-delta-cell-label {
+  font-size: 0.67rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text3);
   margin-bottom: 5px;
 }
-.bar-name  { font-size: 0.76rem; color: var(--muted); }
-.bar-count { font-family: var(--font-m); font-size: 0.75rem; color: var(--white); }
-.bar-track {
-  height: 10px; background: rgba(255,255,255,0.06);
-  border-radius: 5px; overflow: hidden;
+.comp-delta-cell-val {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--navy);
+  font-family: var(--font);
+  letter-spacing: -0.02em;
 }
-.bar-fill {
-  height: 100%; border-radius: 5px;
-  transition: width 0.55s cubic-bezier(.4,0,.2,1);
+.comp-delta-cell.positive .comp-delta-cell-val { color: var(--green); }
+.comp-delta-cell.negative .comp-delta-cell-val { color: var(--red); }
+.comp-delta-cell-sub {
+  font-size: 0.67rem;
+  color: var(--text3);
+  margin-top: 3px;
 }
+.comp-table-wrap {
+  padding: 0 28px 24px;
+}
+.comp-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+}
+.comp-table th {
+  padding: 10px 12px;
+  text-align: left;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text3);
+  border-bottom: 2px solid var(--border);
+}
+.comp-table th:not(:first-child) { text-align: right; }
+.comp-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text2);
+}
+.comp-table td:not(:first-child) { text-align: right; font-family: var(--mono); font-size: 0.77rem; font-weight: 600; }
+.comp-table tr:last-child td { border-bottom: none; }
+.comp-table tr:hover td { background: var(--surface2); }
+.td-rival { color: var(--red) !important; }
+.td-os    { color: var(--teal) !important; }
+.td-pos   { color: var(--green) !important; }
+.td-neg   { color: var(--red) !important; }
 
-/* Interchange big highlight card */
-.ic-highlight {
-  background: linear-gradient(135deg, rgba(0,196,188,0.08), rgba(0,196,188,0.02));
-  border: 1px solid rgba(0,196,188,0.25); border-radius: 14px;
-  padding: 20px 24px;
-  display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;
-  align-items: center;
-}
-.ic-h-block {}
-.ic-h-label { font-size: 0.67rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); margin-bottom: 4px; }
-.ic-h-val   { font-family: var(--font-h); font-size: 1.3rem; font-weight: 800; color: var(--teal); }
-.ic-h-sub   { font-size: 0.68rem; color: var(--muted); margin-top: 3px; }
-.ic-h-divider { width: 1px; height: 48px; background: var(--border); justify-self: center; }
-
-/* Footer note */
-.methodology {
-  background: rgba(0,196,188,0.03); border: 1px solid rgba(0,196,188,0.1);
-  border-radius: 12px; padding: 16px 20px;
-  font-size: 0.73rem; color: var(--muted); line-height: 1.7;
-}
-.methodology strong { color: var(--white); }
-
-/* Scrollbar */
-::-webkit-scrollbar { width: 5px; height: 5px; }
-::-webkit-scrollbar-thumb { background: rgba(0,196,188,0.2); border-radius: 3px; }
-
-/* Responsive */
-@media (max-width: 1024px) {
-  .calc-grid { grid-template-columns: 1fr; }
-  .stats-strip { grid-template-columns: repeat(2, 1fr); }
-}
-@media (max-width: 600px) {
-  .hero, .page { padding: 24px 16px; }
-  nav { padding: 0 16px; }
-  .stats-strip { grid-template-columns: 1fr 1fr; }
-  .ic-highlight { grid-template-columns: 1fr; }
-  .ic-h-divider { display: none; }
-}
-
-/* ── COMPETITOR COMPARATOR ── */
-.comp-section {
-  border-top: 1px solid var(--border);
-  background: linear-gradient(180deg, rgba(0,196,188,0.02) 0%, transparent 100%);
-}
-.comp-header {
-  max-width: 1280px; margin: 0 auto; padding: 40px 40px 0;
-}
-.comp-header-eyebrow {
-  font-size: 0.72rem; font-weight: 700; font-family: var(--font-m);
-  text-transform: uppercase; letter-spacing: 0.08em; color: var(--teal); margin-bottom: 10px;
-}
-.comp-header h2 {
-  font-family: var(--font-h); font-size: clamp(1.3rem,2.5vw,1.9rem);
-  font-weight: 800; color: var(--white); margin-bottom: 8px;
-}
-.comp-header p { font-size: 0.88rem; color: var(--muted); max-width: 600px; }
-
-.comp-grid {
-  max-width: 1280px; margin: 0 auto; padding: 28px 40px 48px;
-  display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
-}
-
-.comp-col {
-  background: var(--card); border: 1px solid var(--border);
-  border-radius: 16px; overflow: hidden;
-}
-.comp-col.outseer { border-color: rgba(0,196,188,0.3); }
-.comp-col-head {
-  padding: 16px 20px; border-bottom: 1px solid var(--border);
-  display: flex; align-items: center; gap: 10px;
-}
-.comp-col.outseer .comp-col-head { background: rgba(0,196,188,0.07); }
-.comp-col.rival .comp-col-head { background: rgba(255,255,255,0.02); }
-.comp-col-title {
-  font-family: var(--font-h); font-size: 0.88rem; font-weight: 700;
-}
-.comp-col.outseer .comp-col-title { color: var(--teal); }
-.comp-col.rival .comp-col-title { color: var(--muted); }
-.comp-col-body { padding: 20px; display: flex; flex-direction: column; gap: 0; }
-
-.comp-metric-row {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 11px 0; border-bottom: 1px solid rgba(255,255,255,0.04);
-}
-.comp-metric-row:last-child { border-bottom: none; }
-.comp-metric-label { font-size: 0.78rem; color: var(--muted); }
-.comp-metric-val {
-  font-family: var(--font-m); font-size: 0.85rem; font-weight: 500;
-  color: var(--white);
-}
-.comp-metric-val.better { color: var(--green); }
-.comp-metric-val.worse  { color: var(--red); }
-.comp-metric-val.neutral { color: var(--muted); }
-
-.comp-delta-band {
-  max-width: 1280px; margin: -12px auto 0; padding: 0 40px 40px;
-  display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
-}
-.comp-delta-card {
-  background: var(--card); border: 1px solid var(--border);
-  border-radius: 12px; padding: 16px 18px;
-  transition: border-color 0.2s;
-}
-.comp-delta-card.positive { border-color: rgba(34,197,94,0.3); background: rgba(34,197,94,0.04); }
-.comp-delta-card.negative { border-color: rgba(239,68,68,0.25); background: rgba(239,68,68,0.04); }
-.comp-delta-label { font-size: 0.67rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); margin-bottom: 5px; }
-.comp-delta-val { font-family: var(--font-h); font-size: 1.2rem; font-weight: 800; }
-.comp-delta-val.positive { color: var(--green); }
-.comp-delta-val.negative { color: var(--red); }
-.comp-delta-sub { font-size: 0.68rem; color: var(--muted); margin-top: 4px; }
-
-@media (max-width: 900px) {
-  .comp-grid { grid-template-columns: 1fr; }
-  .comp-delta-band { grid-template-columns: 1fr 1fr; }
-}
-@media (max-width: 600px) {
-  .comp-header, .comp-grid, .comp-delta-band { padding-left: 16px; padding-right: 16px; }
-  .comp-delta-band { grid-template-columns: 1fr 1fr; }
-}
-
-/* Animate values on change */
+/* Flash animation */
 @keyframes flashVal {
-  0% { color: var(--teal); }
-  50% { color: #fff; }
-  100% { color: var(--teal); }
+  0%   { opacity: 1; }
+  30%  { opacity: 0.4; }
+  100% { opacity: 1; }
 }
 .val-flash { animation: flashVal 0.35s ease; }
+
+/* Responsive */
+@media (max-width: 1100px) {
+  .shell { grid-template-columns: 1fr; }
+  .results-sidebar { position: static; }
+  .comp-body { grid-template-columns: 1fr; }
+  .comp-delta-row { grid-template-columns: repeat(2,1fr); }
+}
+@media (max-width: 600px) {
+  .shell { padding: 16px; }
+  nav { padding: 0 16px; }
+  .comp-delta-row { grid-template-columns: 1fr 1fr; }
+}
 </style>
 </head>
 <body>
 
-<div class="glow glow-1"></div>
-<div class="glow glow-2"></div>
-
 <!-- NAV -->
 <nav>
-  <a href="#" class="nav-brand">
+  <a class="nav-brand" href="#">
     <div class="nav-logo">OS</div>
-    Outseer
+    <span class="nav-name">Outseer</span>
   </a>
-  <div class="nav-pill">ROI Calculator · 3DS Frictionless</div>
+  <span class="nav-badge">3DS ROI Calculator</span>
 </nav>
 
-<!-- HERO -->
-<div class="hero">
-  <div>
-    <div class="hero-eyebrow"><div class="hero-eyebrow-dot"></div>Back-Office Savings Model</div>
-    <h1>Frictionless Rate Impact on<br><em>Cost &amp; Revenue</em></h1>
-    <p class="hero-sub">Quantify exactly how much Outseer's 3DS frictionless decisioning saves across manual review, fraud claim processing, OTP delivery, recovered transaction value, and interchange fees. Built for PSD2 / UK SCA mandatory authentication environments — all in-scope transactions are authenticated (ECI 05/02); the baseline is step-up challenge vs Outseer frictionless.</p>
+<!-- SHELL -->
+<div class="shell">
+
+  <!-- PAGE TITLE -->
+  <div class="page-title-block">
+    <div class="page-eyebrow">Frictionless Rate Impact Analysis</div>
+    <h1 class="page-title">3DS Frictionless ROI Calculator</h1>
+    <p class="page-sub">Quantify the annual saving from shifting challenged transactions to Outseer-scored frictionless authentication. Built for EU&nbsp;/&nbsp;UK issuers operating under PSD2 mandatory SCA.</p>
   </div>
-  <div class="total-card">
-    <div class="total-card-label">Estimated Annual Saving</div>
-    <div class="total-card-amount" id="hero-total">£0</div>
-    <div class="total-card-sub">vs. current frictionless baseline</div>
-  </div>
-</div>
 
-<!-- MAIN -->
-<div class="page">
-  <div class="calc-grid">
+  <!-- LEFT: STEPPED INPUT SECTIONS -->
+  <div class="steps">
 
-    <!-- ═══ LEFT — INPUTS ═══ -->
-    <div style="display:flex;flex-direction:column;gap:16px;">
-
-      <!-- Transaction Profile -->
-      <div class="panel">
-        <div class="panel-head">
-          <div class="panel-head-icon">📊</div>
-          <div class="panel-head-title">Transaction Profile</div>
+    <!-- STEP 1: PORTFOLIO -->
+    <div class="step-card active" id="step-1">
+      <div class="step-header" onclick="toggleStep(1)">
+        <div class="step-num">1</div>
+        <div class="step-title-block">
+          <div class="step-title">Transaction Portfolio</div>
+          <div class="step-subtitle">Volume, frictionless rates, and average order value</div>
         </div>
-        <div class="panel-body">
+        <span class="step-chevron">▼</span>
+      </div>
+      <div class="step-body">
+        <div class="field-group">
 
-          <div class="ctrl-row">
-            <div class="ctrl-header">
-              <div class="ctrl-label">Monthly 3DS Transaction Volume</div>
-              <div class="ctrl-val" id="v-vol">500,000</div>
+          <div class="field">
+            <div class="field-label">
+              Monthly 3DS Transaction Volume
+              <span class="field-val" id="v-vol">500,000</span>
             </div>
             <input type="range" min="10000" max="10000000" step="10000" value="500000" id="roi-vol" oninput="calcROI()"/>
           </div>
 
-          <div class="ctrl-row">
-            <div class="ctrl-header">
-              <div class="ctrl-label">Current Frictionless Rate <span style="color:var(--amber)"> — before Outseer</span></div>
-              <div class="ctrl-val" id="v-cur" style="border-color:rgba(245,158,11,0.3);background:rgba(245,158,11,0.08);color:var(--amber)">55%</div>
+          <div class="field">
+            <div class="field-label">
+              Current Frictionless Rate <span style="color:var(--text3);font-weight:400"> — before Outseer</span>
+              <span class="field-val amber" id="v-cur">55%</span>
             </div>
             <input type="range" min="0" max="95" step="1" value="55" id="roi-current-fr" oninput="calcROI()"/>
           </div>
 
-          <div class="ctrl-row">
-            <div class="ctrl-header">
-              <div class="ctrl-label">Target Frictionless Rate <span style="color:var(--teal)"> — with Outseer</span></div>
-              <div class="ctrl-val" id="v-tgt">88%</div>
+          <div class="field">
+            <div class="field-label">
+              Target Frictionless Rate <span style="color:var(--text3);font-weight:400"> — with Outseer</span>
+              <span class="field-val" id="v-tgt">88%</span>
             </div>
             <input type="range" min="0" max="99" step="1" value="88" id="roi-target-fr" oninput="calcROI()"/>
           </div>
 
-          <div class="ctrl-row">
-            <div class="ctrl-header">
-              <div class="ctrl-label">Average Order Value (AOV)</div>
-              <div class="ctrl-val" id="v-aov">£85</div>
+          <div class="field">
+            <div class="field-label">
+              Average Order Value (AOV)
+              <span class="field-val" id="v-aov">£85</span>
             </div>
             <input type="range" min="10" max="500" step="5" value="85" id="roi-aov" oninput="calcROI()"/>
           </div>
 
         </div>
       </div>
+    </div>
 
-      <!-- Back-Office Costs -->
-      <div class="panel">
-        <div class="panel-head">
-          <div class="panel-head-icon">⚙️</div>
-          <div class="panel-head-title">Back-Office Cost Assumptions</div>
+    <!-- STEP 2: BACK OFFICE -->
+    <div class="step-card active" id="step-2">
+      <div class="step-header" onclick="toggleStep(2)">
+        <div class="step-num">2</div>
+        <div class="step-title-block">
+          <div class="step-title">Back-Office Cost Assumptions</div>
+          <div class="step-subtitle">Review costs, OTP/OOB split, abandonment rates, claims</div>
         </div>
-        <div class="panel-body">
+        <span class="step-chevron">▼</span>
+      </div>
+      <div class="step-body">
+        <div class="field-group">
 
-          <div class="ctrl-row">
-            <div class="ctrl-header">
-              <div class="ctrl-label">Manual Review Cost per Case <span style="color:var(--muted)"> — cost per confirmed fraud case worked by an analyst</span></div>
-              <div class="ctrl-val" id="v-review">£1.80</div>
+          <div class="field">
+            <div class="field-label">
+              Manual Review Cost per Case
+              <span class="field-val" id="v-review">£1.80 / case</span>
             </div>
+            <div class="field-hint">Cost per confirmed fraud case worked by an analyst. Case count is derived from your fraud data in Step 3. <span id="v-review-derived" style="color:var(--teal);font-weight:600;"></span></div>
             <input type="range" min="0.10" max="10.00" step="0.10" value="1.80" id="roi-review" oninput="calcROI()"/>
-            <div style="font-size:0.71rem;color:var(--muted);margin-top:6px;line-height:1.5;">
-              Case count is derived from the <strong style="color:var(--white)">Confirmed Fraud Cases</strong> entered in the Fraud Detection Rate panel — those are the transactions that created cases and were worked by analysts. Review saving = annualised confirmed fraud reduction × cost per case.
-              <span id="v-review-derived" style="display:block;margin-top:4px;color:var(--teal);font-weight:600;font-family:var(--font-m);font-size:0.78rem;"></span>
-            </div>
           </div>
 
-          <div class="ctrl-row">
-            <div class="ctrl-header">
-              <div class="ctrl-label">OTP Split — % of Challenges Delivered via OTP / SMS <span style="color:var(--amber)"> — remainder is OOB push</span></div>
-              <div class="ctrl-val" id="v-otp-split" style="border-color:rgba(245,158,11,0.3);background:rgba(245,158,11,0.08);color:var(--amber)">70%</div>
+          <div class="section-divider">OTP / OOB Challenge Split</div>
+
+          <div class="field">
+            <div class="field-label">
+              OTP (SMS) Share of Challenged Transactions
+              <span class="field-val amber" id="v-otp-split">70%</span>
             </div>
+            <div class="field-hint" id="v-oob-pct-label">Remainder delivered via OOB push notification through the mobile banking app.</div>
             <input type="range" min="0" max="100" step="1" value="70" id="roi-otp-split" oninput="calcROI()"/>
-            <div style="font-size:0.71rem;color:var(--muted);margin-top:6px;line-height:1.5;">
-              OOB (Out-of-Band) push challenges are delivered via the issuer's mobile banking app — push notifications carry near-zero marginal delivery cost (APNS/FCM). Only the OTP portion incurs per-SMS gateway fees.
-              <span id="v-oob-pct-label" style="color:var(--teal);font-weight:600;"></span>
-            </div>
           </div>
 
-          <div class="ctrl-row">
-            <div class="ctrl-header">
-              <div class="ctrl-label">OTP / SMS Delivery Cost per Challenge <span style="color:var(--muted)"> — OTP portion only</span></div>
-              <div class="ctrl-val" id="v-sms">£0.06</div>
+          <div class="field">
+            <div class="field-label">
+              OTP / SMS Delivery Cost per Challenge
+              <span class="field-val" id="v-sms">£0.06</span>
             </div>
+            <div class="field-hint">Applies to OTP portion only — OOB push (APNS/FCM) carries near-zero marginal delivery cost.</div>
             <input type="range" min="0.01" max="0.50" step="0.01" value="0.06" id="roi-sms" oninput="calcROI()"/>
           </div>
 
-          <div class="ctrl-row">
-            <div class="ctrl-header">
-              <div class="ctrl-label">OTP Challenge Abandonment Rate <span style="color:var(--amber)"> — cardholder drops at SMS challenge</span></div>
-              <div class="ctrl-val" id="v-abandon">18%</div>
+          <div class="section-divider">Abandonment Rates</div>
+
+          <div class="field">
+            <div class="field-label">
+              OTP Challenge Abandonment Rate
+              <span class="field-val amber" id="v-abandon">18%</span>
             </div>
+            <div class="field-hint">Cardholders who drop out at the SMS OTP challenge screen.</div>
             <input type="range" min="0" max="50" step="1" value="18" id="roi-abandon" oninput="calcROI()"/>
           </div>
 
-          <div class="ctrl-row">
-            <div class="ctrl-header">
-              <div class="ctrl-label">OOB Challenge Abandonment Rate <span style="color:var(--teal)"> — cardholder drops at push notification</span></div>
-              <div class="ctrl-val" id="v-oob-abandon">8%</div>
+          <div class="field">
+            <div class="field-label">
+              OOB Push Abandonment Rate
+              <span class="field-val" id="v-oob-abandon">8%</span>
             </div>
+            <div class="field-hint">Lower than OTP — cardholders approve in-app via biometrics without switching apps.</div>
             <input type="range" min="0" max="50" step="1" value="8" id="roi-oob-abandon" oninput="calcROI()"/>
-            <div style="font-size:0.71rem;color:var(--muted);margin-top:6px;line-height:1.5;">OOB push abandonment is typically lower than OTP — the cardholder approves within their banking app using biometrics, without needing to switch apps or wait for an SMS.</div>
           </div>
 
-          <div class="ctrl-row">
-            <div class="ctrl-header">
-              <div class="ctrl-label">Inbound Fraud Claim Processing Cost per Case</div>
-              <div class="ctrl-val" id="v-dispute">£35</div>
+          <div class="section-divider">Fraud Claim Processing</div>
+
+          <div class="field">
+            <div class="field-label">
+              Inbound Fraud Claim Rate on Step-Up Challenged Transactions
+              <span class="field-val amber" id="v-chargeback">0.8%</span>
+            </div>
+            <div class="field-hint">Rate at which cardholders raise fraud claims on step-up challenged transactions (ECI 05/02 via challenge). Frictionless transactions generate fewer claims because Outseer pre-filters high-risk volume to challenge.</div>
+            <input type="range" min="0.1" max="5.0" step="0.1" value="0.8" id="roi-chargeback" oninput="calcROI()"/>
+          </div>
+
+          <div class="field">
+            <div class="field-label">
+              Processing Cost per Fraud Claim
+              <span class="field-val" id="v-dispute">£35</span>
             </div>
             <input type="range" min="5" max="120" step="1" value="35" id="roi-dispute" oninput="calcROI()"/>
           </div>
 
-          <div class="ctrl-row">
-            <div class="ctrl-header">
-              <div class="ctrl-label">Inbound Fraud Claim Rate on Step-Up Challenged Transactions</div>
-              <div class="ctrl-val" id="v-chargeback">0.8%</div>
-            </div>
-            <input type="range" min="0.1" max="5.0" step="0.1" value="0.8" id="roi-chargeback" oninput="calcROI()"/>
-            <div style="font-size:0.71rem;color:var(--muted);margin-top:6px;line-height:1.5;">
-              Under PSD2 / UK SCA, all in-scope CNP transactions must be authenticated — there is no non-authenticated baseline. This rate reflects fraud claims on step-up challenged transactions (<strong style="color:var(--amber)">ECI&nbsp;05/02 via challenge</strong>). When Outseer approves a transaction frictionlessly, it is also ECI&nbsp;05/02 — the issuer carries liability in both cases. The saving is that Outseer’s risk scoring concentrates fraud into the step-up pool, so the frictionless population triggers fewer inbound fraud claims per transaction.
-            </div>
-          </div>
-
-
-
         </div>
       </div>
+    </div>
 
-      <!-- Fraud Detection Rate -->
-      <div class="panel">
-        <div class="panel-head">
-          <div class="panel-head-icon">🛡️</div>
-          <div class="panel-head-title">Fraud Detection Rate</div>
+    <!-- STEP 3: FRAUD DETECTION RATE -->
+    <div class="step-card active" id="step-3">
+      <div class="step-header" onclick="toggleStep(3)">
+        <div class="step-num">3</div>
+        <div class="step-title-block">
+          <div class="step-title">Fraud Detection Rate</div>
+          <div class="step-subtitle">Confirmed cases + chargeback file — before and after Outseer</div>
         </div>
-        <div class="panel-body">
+        <span class="step-chevron">▼</span>
+      </div>
+      <div class="step-body">
 
-          <div style="font-size:0.75rem;color:var(--muted);line-height:1.6;padding:4px 0 12px;border-bottom:1px solid rgba(255,255,255,0.04);margin-bottom:4px;">
-            <strong style="color:var(--white);display:block;margin-bottom:4px;">Detection Rate = Confirmed Fraud (case-marked) ÷ (Confirmed Fraud + Missed Fraud)</strong>
-            Confirmed fraud = cases created and marked as fraud in the case management system. Missed fraud = customer-reported fraud discovered via repudiation / chargeback file. Enter volumes for the period your data covers.
-          </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin-top:14px;margin-bottom:4px;font-size:0.77rem;color:var(--text2);line-height:1.6;">
+          <strong style="color:var(--navy);display:block;margin-bottom:3px;">Detection Rate = Confirmed Fraud ÷ (Confirmed Fraud + Missed Fraud)</strong>
+          Confirmed fraud = cases created and marked as fraud in the case management system. Missed fraud = customer-reported via repudiation / chargeback file. Enter volumes for your chosen data period.
+        </div>
 
-          <div class="ctrl-row" style="padding-top:8px">
-            <div class="ctrl-label" style="margin-bottom:6px;">Data Period</div>
-            <select class="ctrl-select" id="roi-fraud-period" onchange="calcROI();">
+        <div class="field-group">
+          <div class="field">
+            <div class="field-label">Data Period</div>
+            <select class="field-select" id="roi-fraud-period" onchange="calcROI();">
               <option value="1">Monthly</option>
               <option value="3">Quarterly</option>
               <option value="12" selected>Annual</option>
             </select>
           </div>
+        </div>
 
-          <div style="margin:16px 0 4px;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--amber);">— Before Outseer (current / competitor)</div>
+        <div class="section-divider" style="color:var(--amber);">Before Outseer</div>
+        <div class="field-group">
 
-          <div class="ctrl-row">
-            <div class="ctrl-header">
-              <div class="ctrl-label">Confirmed Fraud Cases <span style="color:var(--amber)"> — case-marked in fraud system</span></div>
-              <div class="ctrl-val" id="v-conf-before" style="border-color:rgba(245,158,11,0.3);background:rgba(245,158,11,0.08);color:var(--amber)">1,200</div>
+          <div class="field">
+            <div class="field-label">
+              Confirmed Fraud Cases — case-marked
+              <span class="field-val amber" id="v-conf-before">1,200</span>
             </div>
+            <div class="field-hint">Cases marked as fraud in the case management system — what the current system caught.</div>
             <input type="range" min="0" max="50000" step="50" value="1200" id="roi-conf-before" oninput="calcROI()"/>
-            <div style="font-size:0.71rem;color:var(--muted);margin-top:6px;line-height:1.5;">Cases that went through the fraud workflow and were marked as confirmed fraud. These are transactions the system caught.</div>
           </div>
 
-          <div class="ctrl-row">
-            <div class="ctrl-header">
-              <div class="ctrl-label">Missed Fraud <span style="color:var(--amber)"> — customer-reported via repudiation / chargeback file</span></div>
-              <div class="ctrl-val" id="v-missed-before" style="border-color:rgba(245,158,11,0.3);background:rgba(245,158,11,0.08);color:var(--amber)">850</div>
+          <div class="field">
+            <div class="field-label">
+              Missed Fraud — repudiation / chargeback file
+              <span class="field-val amber" id="v-missed-before">850</span>
             </div>
+            <div class="field-hint">Fraud discovered retrospectively via cardholder repudiation — false negatives the system did not catch.</div>
             <input type="range" min="0" max="50000" step="50" value="850" id="roi-missed-before" oninput="calcROI()"/>
-            <div style="font-size:0.71rem;color:var(--muted);margin-top:6px;line-height:1.5;">Fraud the system did not catch — discovered retrospectively when cardholders reported it through repudiation or the chargeback file. These are false negatives.</div>
           </div>
 
-          <div style="background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.2);border-radius:8px;padding:10px 14px;margin-top:8px;display:flex;gap:24px;flex-wrap:wrap;">
+          <div class="derived-box amber">
             <div>
-              <div style="font-size:0.67rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);margin-bottom:3px;">Total True Fraud (before)</div>
-              <div style="font-family:var(--font-m);font-size:0.9rem;color:var(--amber);font-weight:600;" id="v-total-fraud-before">2,050</div>
+              <div class="derived-item-label">Total True Fraud</div>
+              <div class="derived-item-val amber" id="v-total-fraud-before">2,050</div>
             </div>
             <div>
-              <div style="font-size:0.67rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);margin-bottom:3px;">Detection Rate (before)</div>
-              <div style="font-family:var(--font-m);font-size:0.9rem;color:var(--amber);font-weight:600;" id="v-det-rate-before">58.5%</div>
+              <div class="derived-item-label">Detection Rate</div>
+              <div class="derived-item-val amber" id="v-det-rate-before">58.5%</div>
             </div>
           </div>
 
-          <div style="margin:20px 0 4px;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--teal);">— With Outseer</div>
+        </div>
 
-          <div class="ctrl-row">
-            <div class="ctrl-header">
-              <div class="ctrl-label">Confirmed Fraud Cases <span style="color:var(--teal)"> — case-marked with Outseer</span></div>
-              <div class="ctrl-val" id="v-conf-after">1,650</div>
+        <div class="section-divider" style="color:var(--teal);">With Outseer</div>
+        <div class="field-group">
+
+          <div class="field">
+            <div class="field-label">
+              Confirmed Fraud Cases — case-marked
+              <span class="field-val" id="v-conf-after">1,650</span>
             </div>
+            <div class="field-hint">Cases confirmed with Outseer in place over the same period.</div>
             <input type="range" min="0" max="50000" step="50" value="1650" id="roi-conf-after" oninput="calcROI()"/>
-            <div style="font-size:0.71rem;color:var(--muted);margin-top:6px;line-height:1.5;">Cases confirmed as fraud in the Outseer-enabled case management system over the same period.</div>
           </div>
 
-          <div class="ctrl-row">
-            <div class="ctrl-header">
-              <div class="ctrl-label">Missed Fraud <span style="color:var(--teal)"> — customer-reported with Outseer</span></div>
-              <div class="ctrl-val" id="v-missed-after">200</div>
+          <div class="field">
+            <div class="field-label">
+              Missed Fraud — repudiation / chargeback file
+              <span class="field-val" id="v-missed-after">200</span>
             </div>
+            <div class="field-hint">Fraud still not caught with Outseer — discovered via repudiation file.</div>
             <input type="range" min="0" max="50000" step="50" value="200" id="roi-missed-after" oninput="calcROI()"/>
-            <div style="font-size:0.71rem;color:var(--muted);margin-top:6px;line-height:1.5;">Fraud that Outseer's risk engine did not catch — discovered via repudiation / chargeback file with Outseer in place.</div>
           </div>
 
-          <div style="background:rgba(0,196,188,0.06);border:1px solid rgba(0,196,188,0.2);border-radius:8px;padding:10px 14px;margin-top:8px;display:flex;gap:24px;flex-wrap:wrap;">
+          <div class="derived-box teal">
             <div>
-              <div style="font-size:0.67rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);margin-bottom:3px;">Total True Fraud (after)</div>
-              <div style="font-family:var(--font-m);font-size:0.9rem;color:var(--teal);font-weight:600;" id="v-total-fraud-after">1,850</div>
+              <div class="derived-item-label">Total True Fraud</div>
+              <div class="derived-item-val" id="v-total-fraud-after">1,850</div>
             </div>
             <div>
-              <div style="font-size:0.67rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);margin-bottom:3px;">Detection Rate (after)</div>
-              <div style="font-family:var(--font-m);font-size:0.9rem;color:var(--teal);font-weight:600;" id="v-det-rate-after">89.2%</div>
+              <div class="derived-item-label">Detection Rate</div>
+              <div class="derived-item-val" id="v-det-rate-after">89.2%</div>
             </div>
           </div>
 
-          <div class="ctrl-row" style="margin-top:16px;">
-            <div class="ctrl-header">
-              <div class="ctrl-label">Average Fraud Loss per Missed Transaction <span style="color:var(--muted)"> — issuer net loss on undetected fraud</span></div>
-              <div class="ctrl-val" id="v-fraud-loss">£72</div>
+          <div class="field">
+            <div class="field-label">
+              Average Fraud Loss per Missed Transaction
+              <span class="field-val" id="v-fraud-loss">£72</span>
             </div>
+            <div class="field-hint">Issuer net loss per missed fraudulent transaction — no merchant recovery on ECI 05/02 under PSD2.</div>
             <input type="range" min="10" max="500" step="5" value="72" id="roi-fraud-loss" oninput="calcROI()"/>
-            <div style="font-size:0.71rem;color:var(--muted);margin-top:6px;line-height:1.5;">
-              Net issuer loss per fraudulent transaction that was missed. Under PSD2/SCA mandatory authentication, all in-scope transactions are ECI&nbsp;05/02 — the issuer bears the full fraud loss on missed cases with no recovery route from the merchant.
-            </div>
           </div>
 
         </div>
       </div>
-      <!-- Interchange -->
-      <div class="panel">
-        <div class="panel-head">
-          <div class="panel-head-icon">💳</div>
-          <div class="panel-head-title">Interchange Rate</div>
+    </div>
+
+    <!-- STEP 4: INTERCHANGE -->
+    <div class="step-card active" id="step-4">
+      <div class="step-header" onclick="toggleStep(4)">
+        <div class="step-num">4</div>
+        <div class="step-title-block">
+          <div class="step-title">Interchange Rate</div>
+          <div class="step-subtitle">PSD2 regulated flat cap — used for recovered transaction value only</div>
         </div>
-        <div class="panel-body">
-          <div style="font-size:0.75rem;color:var(--muted);line-height:1.6;padding:4px 0 14px;border-bottom:1px solid rgba(255,255,255,0.04);margin-bottom:4px;">
-            Under PSD2, interchange is capped at <strong style="color:var(--white)">0.20% for consumer debit</strong> and <strong style="color:var(--white)">0.30% for consumer credit</strong> — no differential between frictionless and challenged transactions. This rate is used only to calculate interchange income on transactions recovered from challenge screen abandonment.
-          </div>
-          <div class="ctrl-row" style="padding-top:8px">
-            <div class="ctrl-label" style="margin-bottom:6px;">Portfolio Card Type</div>
-            <select class="ctrl-select" id="roi-card-type" onchange="cardTypePreset();calcROI();">
+        <span class="step-chevron">▼</span>
+      </div>
+      <div class="step-body">
+        <div style="background:var(--amber-l);border:1px solid rgba(194,125,0,0.2);border-radius:8px;padding:11px 14px;margin-top:14px;margin-bottom:4px;font-size:0.75rem;color:var(--text2);line-height:1.55;">
+          Under PSD2, interchange is capped at <strong style="color:var(--navy)">0.20% (consumer debit)</strong> and <strong style="color:var(--navy)">0.30% (consumer credit)</strong> regardless of authentication method. There is no differential between frictionless and challenged transactions. This rate is used only to calculate the interchange income earned on transactions recovered from challenge screen abandonment.
+        </div>
+        <div class="field-group">
+          <div class="field">
+            <div class="field-label">Portfolio Card Type</div>
+            <select class="field-select" id="roi-card-type" onchange="cardTypePreset();calcROI();">
               <option value="debit">Consumer Debit — 0.20% (PSD2 cap)</option>
               <option value="credit">Consumer Credit — 0.30% (PSD2 cap)</option>
               <option value="mixed" selected>Mixed Debit / Credit — 0.25% (blended)</option>
             </select>
           </div>
-          <div class="ctrl-row" style="margin-top:12px;">
-            <div class="ctrl-header">
-              <div class="ctrl-label">Interchange Rate <span style="color:var(--muted)"> — used for recovered transaction value only</span></div>
-              <div class="ctrl-val" id="v-ic-std">0.25%</div>
+          <div class="field">
+            <div class="field-label">
+              Interchange Rate
+              <span class="field-val" id="v-ic-std">0.25%</span>
             </div>
             <input type="range" min="0.10" max="0.50" step="0.01" value="0.25" id="roi-ic-standard" oninput="calcROI()"/>
           </div>
         </div>
       </div>
-    </div><!-- end left col -->
+    </div>
 
-    <!-- ═══ RIGHT — OUTPUTS ═══ -->
-    <div class="right-col">
+    <!-- Methodology -->
+    <div class="method-note">
+      <strong>Methodology:</strong> Under PSD2 / UK SCA, all in-scope CNP transactions are authenticated (ECI 05/02) — there is no non-authenticated baseline. This model compares step-up challenge (current state) vs Outseer TRA-exempt frictionless (target). Both paths produce ECI 05/02; the issuer bears liability on both. Fraud detection rate saving = reduction in missed fraud cases × loss per missed transaction. OTP/SMS cost applies to the OTP portion of challenges only. Abandonment saving uses a blended rate weighted across OTP and OOB channels. Manual review rate is derived from confirmed fraud case volumes. Interchange rate applies only to interchange income on recovered abandoned transactions — no differential exists under PSD2 for consumer cards.
+    </div>
 
-      <!-- Stats strip -->
-      <div class="stats-strip">
-        <div class="stat-card">
-          <div class="stat-card-label">Transactions Shifted</div>
-          <div class="stat-card-val" id="s-shifted" style="color:var(--teal)">—</div>
-          <div class="stat-card-sub">moved to frictionless / year</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-card-label">Frictionless Rate Lift</div>
-          <div class="stat-card-val" id="s-lift" style="color:var(--green)">—</div>
-          <div class="stat-card-sub">percentage point increase</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-card-label">Interchange on Recovered Txns</div>
-          <div class="stat-card-val" id="s-revenue" style="color:var(--green)">—</div>
-          <div class="stat-card-sub">interchange on recovered transactions</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-card-label">Saving per Frictionless Tx</div>
-          <div class="stat-card-val" id="s-pertx" style="color:var(--teal)">—</div>
-          <div class="stat-card-sub">all cost lines combined</div>
-        </div>
-      </div>
+  </div><!-- end steps -->
 
-      <!-- Savings breakdown -->
-      <div class="panel breakdown-panel">
-        <div class="panel-head">
-          <div class="panel-head-icon">📈</div>
-          <div class="panel-head-title">Annual Savings Breakdown</div>
-        </div>
+  <!-- RIGHT: STICKY RESULTS -->
+  <div class="results-sidebar" style="align-self:start;">
 
-        <div class="breakdown-row">
-          <div class="bd-icon">👤</div>
-          <div class="bd-text">
-            <div class="bd-name">Manual Review Labour</div>
-            <div class="bd-sub" id="bd-sub-review">—</div>
-          </div>
-          <div class="bd-amount" id="bd-review">—</div>
-        </div>
+    <!-- Hero total -->
+    <div class="result-hero">
+      <div class="result-hero-label">Estimated Annual Saving</div>
+      <div class="result-hero-amount" id="hero-total">£0</div>
+      <div class="result-hero-sub">vs. current frictionless baseline</div>
+    </div>
 
-        <div class="breakdown-row">
-          <div class="bd-icon">📱</div>
-          <div class="bd-text">
-            <div class="bd-name">OTP / SMS Delivery Fees</div>
-            <div class="bd-sub" id="bd-sub-sms">—</div>
-          </div>
-          <div class="bd-amount" id="bd-sms">—</div>
+    <!-- KPI strip -->
+    <div class="kpi-strip">
+      <div class="kpi-row">
+        <div class="kpi-label">
+          <div class="kpi-icon" style="background:#eaf5ef;">↑</div>
+          Transactions Shifted
         </div>
-
-        <div class="breakdown-row">
-          <div class="bd-icon">⚖️</div>
-          <div class="bd-text">
-            <div class="bd-name">Inbound Fraud Claim Processing <span style="font-size:0.7rem;font-weight:400;color:var(--muted);font-family:var(--font-b)">(step-up challenged txns — ECI&nbsp;05/02 via challenge, pre-Outseer baseline)</span></div>
-            <div class="bd-sub" id="bd-sub-dispute">—</div>
-          </div>
-          <div class="bd-amount" id="bd-dispute">—</div>
-        </div>
-
-        <div class="breakdown-row">
-          <div class="bd-icon">🛒</div>
-          <div class="bd-text">
-            <div class="bd-name">Recovered Transaction Value — Interchange on Recovered Txns</div>
-            <div class="bd-sub" id="bd-sub-abandon">—</div>
-          </div>
-          <div class="bd-amount green" id="bd-abandon">—</div>
-        </div>
-
-        <div class="breakdown-row" style="border-top:1px solid rgba(239,68,68,0.15);background:rgba(239,68,68,0.03);">
-          <div class="bd-icon">🛡️</div>
-          <div class="bd-text">
-            <div class="bd-name">Fraud Loss Reduction <span style="font-size:0.7rem;font-weight:400;color:var(--muted);font-family:var(--font-b)">(missed fraud reduction — detection rate improvement × missed fraud loss)</span></div>
-            <div class="bd-sub" id="bd-sub-fraud">—</div>
-          </div>
-          <div class="bd-amount" id="bd-fraud" style="color:var(--green)">—</div>
-        </div>
-
-    <div class="breakdown-row total-row">
-          <div class="bd-icon" style="font-size:1.3rem">✦</div>
-          <div class="bd-text">
-            <div class="bd-name" style="font-family:var(--font-h);font-size:0.9rem;font-weight:800;">Total Annual Saving</div>
-            <div class="bd-sub" id="bd-sub-total">vs. current frictionless baseline</div>
-          </div>
-          <div class="bd-amount total" id="bd-total">—</div>
-        </div>
-      </div>
-
-      <!-- Fraud highlight -->
-      <div style="background:linear-gradient(135deg,rgba(239,68,68,0.07),rgba(239,68,68,0.02));border:1px solid rgba(239,68,68,0.2);border-radius:14px;padding:20px 24px;display:grid;grid-template-columns:repeat(4,1fr);gap:16px;align-items:center;">
         <div>
-          <div style="font-size:0.67rem;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted);margin-bottom:4px;">Fraud Loss Saving</div>
-          <div style="font-family:var(--font-h);font-size:1.3rem;font-weight:800;color:var(--green);" id="fraud-h-saving">—</div>
-          <div style="font-size:0.68rem;color:var(--muted);margin-top:3px;" id="fraud-h-pct">— of total saving</div>
+          <div class="kpi-val" id="s-shifted">—</div>
+          <div class="kpi-sub">to frictionless / year</div>
         </div>
-        <div style="width:1px;height:48px;background:rgba(239,68,68,0.2);justify-self:center;"></div>
+      </div>
+      <div class="kpi-row">
+        <div class="kpi-label">
+          <div class="kpi-icon" style="background:var(--teal-xl);">%</div>
+          Frictionless Rate Lift
+        </div>
         <div>
-          <div style="font-size:0.67rem;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted);margin-bottom:4px;">Detection Rate</div>
-          <div style="font-family:var(--font-h);font-size:1.1rem;font-weight:800;color:var(--amber);" id="fraud-h-rate">—</div>
-          <div style="font-size:0.68rem;color:var(--muted);margin-top:3px;" id="fraud-h-rate-after">— with Outseer</div>
+          <div class="kpi-val" id="s-lift">—</div>
+          <div class="kpi-sub">percentage point increase</div>
         </div>
-        <div style="width:1px;height:48px;background:rgba(239,68,68,0.2);justify-self:center;"></div>
+      </div>
+      <div class="kpi-row">
+        <div class="kpi-label">
+          <div class="kpi-icon" style="background:var(--teal-xl);">£</div>
+          Saving per Shifted Tx
+        </div>
         <div>
-          <div style="font-size:0.67rem;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted);margin-bottom:4px;">Missed Fraud Avoided</div>
-          <div style="font-family:var(--font-h);font-size:1.3rem;font-weight:800;color:var(--teal);" id="fraud-h-txns">—</div>
-          <div style="font-size:0.68rem;color:var(--muted);margin-top:3px;" id="fraud-h-txns-sub">cases / period</div>
+          <div class="kpi-val" id="s-pertx">—</div>
+          <div class="kpi-sub">all lines combined</div>
         </div>
-        <div style="width:1px;height:48px;background:rgba(239,68,68,0.2);justify-self:center;"></div>
+      </div>
+      <div class="kpi-row">
+        <div class="kpi-label">
+          <div class="kpi-icon" style="background:var(--teal-xl);">↩</div>
+          Recovered Tx Interchange
+        </div>
         <div>
-          <div style="font-size:0.67rem;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted);margin-bottom:4px;">Remaining Missed Fraud Loss</div>
-          <div style="font-family:var(--font-h);font-size:1.3rem;font-weight:800;color:var(--white);" id="fraud-h-remaining">—</div>
-          <div style="font-size:0.68rem;color:var(--muted);margin-top:3px;">still undetected with Outseer</div>
+          <div class="kpi-val" id="s-revenue">—</div>
+          <div class="kpi-sub">interchange on recovered txns</div>
         </div>
       </div>
+    </div>
 
-      <!-- Bar chart -->
-      <div class="panel">
-        <div class="panel-head">
-          <div class="panel-head-icon">⚡</div>
-          <div class="panel-head-title">Transaction Volume Split (Annual)</div>
+    <!-- Breakdown -->
+    <div class="breakdown-card">
+      <div class="breakdown-head">Annual Savings Breakdown</div>
+      <div class="bd-item">
+        <div class="bd-item-icon" style="background:#eaf5ef;">👤</div>
+        <div class="bd-item-text">
+          <div class="bd-item-name">Manual Review Labour</div>
+          <div class="bd-item-sub" id="bd-sub-review">—</div>
         </div>
-        <div class="chart-rows" id="chart-rows"></div>
+        <div class="bd-item-amt" id="bd-review">—</div>
       </div>
-
-      <!-- Methodology -->
-      <div class="methodology">
-        <strong>Methodology:</strong> <strong style="color:var(--white)">PSD2 / UK SCA context:</strong> Under PSD2 in the EU and the FCA's SCA requirements in the UK, Strong Customer Authentication is <strong style="color:var(--white)">mandatory for all in-scope card-not-present transactions</strong>. There is no legitimate non-authenticated baseline for EU/UK issuers — every in-scope transaction must be authenticated (ECI 05/02) or covered by a valid exemption (TRA, low-value under €30/£30, trusted beneficiary, recurring, MIT). This model therefore frames the comparison as: <strong>step-up challenge baseline</strong> (current state, before Outseer) vs <strong>Outseer frictionless TRA exemption</strong> (target state). Both paths result in ECI 05/02 — the issuer carries liability in both cases. The saving is driven by operational efficiency (fewer challenges, lower fraud rate on scored frictionless volume), not by authentication vs non-authentication.<br><br><strong style="color:var(--white)">Inbound fraud claim processing:</strong> Both step-up challenged and frictionless transactions are ECI 05/02 — the issuer has no dispute rights against the merchant on either. The saving here reflects that Outseer's risk engine concentrates fraud attempts into the step-up pool, so frictionless transactions generate fewer inbound cardholder fraud claims per transaction. Non-fraud disputes (goods not received, not as described) are unaffected by 3DS and excluded throughout. ECI 06/01 (attempted auth) claim processing is conservatively excluded.<br><br><strong style="color:var(--white)">OTP &amp; OOB challenge channels:</strong> OTP (SMS one-time passcode) and OOB (Out-of-Band push notification via mobile banking app) are modelled separately. Only the OTP portion of challenged transactions incurs per-message SMS gateway fees — OOB push delivery via APNS/FCM carries near-zero marginal cost. Cart abandonment is weighted across both channels: OOB push typically has lower abandonment than OTP because the cardholder approves within their banking app without needing to switch apps or wait for an SMS. The blended abandonment rate is: (OTP split × OTP abandonment rate) + (OOB split × OOB abandonment rate).<br><br><strong style="color:var(--white)">Interchange:</strong> Under PSD2, interchange is capped at 0.20% (consumer debit) and 0.30% (consumer credit) regardless of authentication method — there is no differential between frictionless and challenged transactions. The interchange rate in this model is used only to calculate income on transactions recovered from challenge screen abandonment (Line 4). Select your portfolio card type to apply the correct PSD2 cap. All figures are illustrative — calibrate to your portfolio actuals.<br><br><strong style="color:var(--white)">Fraud detection rate &amp; loss saving:</strong> The fraud saving is calculated from the improvement in fraud detection rate, defined as: <strong style="color:var(--white)">Detection Rate = Confirmed Fraud (case-marked) / (Confirmed Fraud + Missed Fraud)</strong>. Confirmed fraud = cases created and marked as fraud in the fraud case management system. Missed fraud = fraud discovered retrospectively via cardholder repudiation or the chargeback file — false negatives the system did not catch. The saving = <em>(missed fraud before − missed fraud after) × net fraud loss per missed transaction</em>. Volumes are entered for the chosen data period and annualised automatically. Both confirmed and missed fraud volumes result in ECI 05/02 transactions under PSD2/SCA mandatory authentication — the issuer bears the full fraud loss on all missed cases with no recovery route from the merchant. The "remaining missed fraud loss" shows the residual annual loss on cases Outseer still does not detect, keeping the model honest about what is not yet caught.
+      <div class="bd-item">
+        <div class="bd-item-icon" style="background:#fff8e6;">📱</div>
+        <div class="bd-item-text">
+          <div class="bd-item-name">OTP / SMS Delivery Fees</div>
+          <div class="bd-item-sub" id="bd-sub-sms">—</div>
+        </div>
+        <div class="bd-item-amt" id="bd-sms">—</div>
       </div>
+      <div class="bd-item">
+        <div class="bd-item-icon" style="background:#fdf0ee;">⚖️</div>
+        <div class="bd-item-text">
+          <div class="bd-item-name">Fraud Claim Processing</div>
+          <div class="bd-item-sub" id="bd-sub-dispute">—</div>
+        </div>
+        <div class="bd-item-amt" id="bd-dispute">—</div>
+      </div>
+      <div class="bd-item">
+        <div class="bd-item-icon" style="background:var(--teal-xl);">🛒</div>
+        <div class="bd-item-text">
+          <div class="bd-item-name">Recovered Transaction Value</div>
+          <div class="bd-item-sub" id="bd-sub-abandon">—</div>
+        </div>
+        <div class="bd-item-amt" id="bd-abandon">—</div>
+      </div>
+      <div class="bd-item" style="background:var(--red-l);">
+        <div class="bd-item-icon" style="background:#fdf0ee;">🛡️</div>
+        <div class="bd-item-text">
+          <div class="bd-item-name">Fraud Loss Reduction</div>
+          <div class="bd-item-sub" id="bd-sub-fraud">—</div>
+        </div>
+        <div class="bd-item-amt" id="bd-fraud" style="color:var(--green);">—</div>
+      </div>
+      <div class="bd-total-row">
+        <div class="bd-total-label">Total Annual Saving</div>
+        <div class="bd-total-amt" id="bd-total">—</div>
+      </div>
+    </div>
 
-    </div><!-- end right col -->
-  </div><!-- end grid -->
-</div><!-- end page -->
-
-
-
-<!-- ══════════════════════════════════════════
-     COMPETITOR COMPARATOR
-══════════════════════════════════════════ -->
-<div class="comp-section">
-  <div class="comp-header">
-    <div class="comp-header-eyebrow">⚔️ Competitive Analysis</div>
-    <h2>Outseer vs Competitor — Fraud &amp; Frictionless Rate Comparator</h2>
-    <p>Enter your competitor's performance metrics alongside Outseer's. The model calculates the annual fraud loss differential, frictionless rate gap, and total value advantage of switching.</p>
-  </div>
-
-  <!-- INPUT COLUMNS -->
-  <div class="comp-grid">
-
-    <!-- COMPETITOR -->
-    <div class="comp-col rival">
-      <div class="comp-col-head">
-        <span style="font-size:1.1rem">🔴</span>
+    <!-- Detection rate visual -->
+    <div class="det-rate-card">
+      <div class="det-rate-head">Fraud Detection Rate</div>
+      <div class="det-rate-row">
+        <div class="det-rate-label" style="color:var(--amber);font-weight:600;font-size:0.72rem;">Before</div>
+        <div class="det-rate-bar-track">
+          <div class="det-rate-bar-fill" id="det-bar-before" style="background:var(--amber);width:58.5%;"></div>
+        </div>
+        <div class="det-rate-val" id="fraud-h-rate" style="color:var(--amber);">—</div>
+      </div>
+      <div class="det-rate-row" style="margin-bottom:0;">
+        <div class="det-rate-label" style="color:var(--teal);font-weight:600;font-size:0.72rem;">Outseer</div>
+        <div class="det-rate-bar-track">
+          <div class="det-rate-bar-fill" id="det-bar-after" style="background:var(--teal);width:89.2%;"></div>
+        </div>
+        <div class="det-rate-val" id="fraud-h-rate-after" style="color:var(--teal);">—</div>
+      </div>
+      <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-size:0.72rem;">
         <div>
-          <div class="comp-col-title">Current / Competitor Solution</div>
-          <div style="font-size:0.71rem;color:var(--muted);margin-top:2px;">Your baseline before Outseer</div>
+          <div style="color:var(--text3);margin-bottom:1px;">Missed fraud avoided</div>
+          <div style="font-family:var(--mono);font-weight:600;color:var(--navy);" id="fraud-h-txns">—</div>
         </div>
-      </div>
-      <div class="comp-col-body">
-        <div class="ctrl-row">
-          <div class="ctrl-header">
-            <div class="ctrl-label">Frictionless Rate</div>
-            <div class="ctrl-val" id="v-comp-fr" style="border-color:rgba(239,68,68,0.3);background:rgba(239,68,68,0.08);color:#f87171">55%</div>
-          </div>
-          <input type="range" min="0" max="99" step="1" value="55" id="comp-fr" oninput="calcComp()"/>
-        </div>
-        <div class="ctrl-row">
-          <div class="ctrl-header">
-            <div class="ctrl-label">Confirmed Fraud Cases <span style="color:#f87171"> — case-marked</span></div>
-            <div class="ctrl-val" id="v-comp-conf" style="border-color:rgba(239,68,68,0.3);background:rgba(239,68,68,0.08);color:#f87171">900</div>
-          </div>
-          <input type="range" min="0" max="50000" step="50" value="900" id="comp-conf" oninput="calcComp()"/>
-          <div style="font-size:0.71rem;color:var(--muted);margin-top:4px;line-height:1.5;">Same period as selected in Fraud Detection Rate panel above.</div>
-        </div>
-        <div class="ctrl-row">
-          <div class="ctrl-header">
-            <div class="ctrl-label">Missed Fraud <span style="color:#f87171"> — via repudiation / chargeback file</span></div>
-            <div class="ctrl-val" id="v-comp-missed" style="border-color:rgba(239,68,68,0.3);background:rgba(239,68,68,0.08);color:#f87171">950</div>
-          </div>
-          <input type="range" min="0" max="50000" step="50" value="950" id="comp-missed" oninput="calcComp()"/>
-        </div>
-        <div class="ctrl-row" style="border-bottom:none">
-          <div class="ctrl-header">
-            <div class="ctrl-label">Fraud Detection Rate (competitor)</div>
-            <div class="ctrl-val" id="v-comp-det-rate" style="color:#f87171">—</div>
-          </div>
-          <div style="font-size:0.71rem;color:var(--muted);margin-top:4px;line-height:1.5;">Calculated: confirmed ÷ (confirmed + missed)</div>
+        <div style="text-align:right;">
+          <div style="color:var(--text3);margin-bottom:1px;">Remaining missed fraud loss</div>
+          <div style="font-family:var(--mono);font-weight:600;color:var(--navy);" id="fraud-h-remaining">—</div>
         </div>
       </div>
     </div>
 
-    <!-- OUTSEER -->
-    <div class="comp-col outseer">
-      <div class="comp-col-head">
-        <span style="font-size:1.1rem">🟢</span>
-        <div>
-          <div class="comp-col-title">Outseer</div>
-          <div style="font-size:0.71rem;color:rgba(0,196,188,0.7);margin-top:2px;">Uses values from main calculator above</div>
+  </div><!-- end results sidebar -->
+
+  <!-- COMPETITOR COMPARATOR -->
+  <div class="comp-section">
+    <div class="comp-section-head">
+      <div>
+        <div class="comp-section-title">Competitor vs Outseer — Fraud &amp; Frictionless Comparator</div>
+        <div class="comp-section-sub">Enter your competitor's metrics to calculate the annual advantage of switching to Outseer.</div>
+      </div>
+      <span class="comp-badge">Competitive Analysis</span>
+    </div>
+
+    <div class="comp-body">
+      <!-- Competitor -->
+      <div class="comp-col-card rival">
+        <div class="comp-col-head-inner">
+          <span>🔴</span>
+          <div class="comp-col-name rival">Current / Competitor Solution</div>
+        </div>
+        <div class="comp-col-inputs">
+          <div class="field">
+            <div class="field-label">Frictionless Rate <span class="field-val amber" id="v-comp-fr">55%</span></div>
+            <input type="range" min="0" max="99" step="1" value="55" id="comp-fr" oninput="calcComp()"/>
+          </div>
+          <div class="field">
+            <div class="field-label">Confirmed Fraud Cases <span class="field-val amber" id="v-comp-conf">900</span></div>
+            <div class="field-hint">Same period as selected in Step 3.</div>
+            <input type="range" min="0" max="50000" step="50" value="900" id="comp-conf" oninput="calcComp()"/>
+          </div>
+          <div class="field" style="border-bottom:none;">
+            <div class="field-label">Missed Fraud (chargeback file) <span class="field-val amber" id="v-comp-missed">950</span></div>
+            <input type="range" min="0" max="50000" step="50" value="950" id="comp-missed" oninput="calcComp()"/>
+          </div>
+          <div class="derived-box amber" style="margin-top:8px;">
+            <div>
+              <div class="derived-item-label">Detection Rate</div>
+              <div class="derived-item-val amber" id="v-comp-det-rate">—</div>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="comp-col-body">
-        <div class="ctrl-row">
-          <div class="ctrl-header">
-            <div class="ctrl-label">Frictionless Rate</div>
-            <div class="ctrl-val" id="v-os-fr">88%</div>
-          </div>
-          <div style="font-size:0.71rem;color:var(--muted);margin-top:4px;">← from Target Frictionless Rate slider above</div>
+
+      <!-- Outseer -->
+      <div class="comp-col-card outseer">
+        <div class="comp-col-head-inner">
+          <span>🟢</span>
+          <div class="comp-col-name outseer">Outseer</div>
         </div>
-        <div class="ctrl-row">
-          <div class="ctrl-header">
-            <div class="ctrl-label">Fraud Detection Rate — Baseline (before Outseer)</div>
-            <div class="ctrl-val" id="v-os-base-det-rate" style="color:var(--amber)">—</div>
+        <div class="comp-col-inputs">
+          <div class="field">
+            <div class="field-label">Frictionless Rate <span class="field-val" id="v-os-fr">88%</span></div>
+            <div class="field-hint">← from Target Frictionless Rate in Step 1</div>
           </div>
-          <div style="font-size:0.71rem;color:var(--muted);margin-top:4px;">← calculated from confirmed + missed fraud inputs above</div>
-        </div>
-        <div class="ctrl-row">
-          <div class="ctrl-header">
-            <div class="ctrl-label">Fraud Detection Rate — With Outseer</div>
-            <div class="ctrl-val" id="v-os-det-rate" style="color:var(--teal)">—</div>
+          <div class="field">
+            <div class="field-label">Detection Rate — Baseline <span class="field-val amber" id="v-os-base-det-rate">—</span></div>
+            <div class="field-hint">← calculated from Step 3 inputs (before Outseer)</div>
           </div>
-          <div style="font-size:0.71rem;color:var(--muted);margin-top:4px;">← calculated from confirmed + missed fraud inputs above</div>
-        </div>
-        <div class="ctrl-row" style="border-bottom:none">
-          <div class="ctrl-header">
-            <div class="ctrl-label">Missed Fraud Cases / yr (with Outseer)</div>
-            <div class="ctrl-val" id="v-os-missed-ann" style="color:var(--teal)">—</div>
+          <div class="field" style="border-bottom:none;">
+            <div class="field-label">Detection Rate — With Outseer <span class="field-val" id="v-os-det-rate">—</span></div>
+            <div class="field-hint">← calculated from Step 3 inputs (after Outseer)</div>
           </div>
-          <div style="font-size:0.71rem;color:var(--muted);margin-top:4px;line-height:1.5;">Annualised from inputs above</div>
+          <div class="derived-box teal" style="margin-top:8px;">
+            <div>
+              <div class="derived-item-label">Missed Fraud / yr</div>
+              <div class="derived-item-val" id="v-os-missed-ann">—</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
-  </div><!-- end comp-grid -->
-
-  <!-- DELTA BAND -->
-  <div class="comp-delta-band">
-    <div class="comp-delta-card" id="delta-card-fr">
-      <div class="comp-delta-label">Frictionless Rate Advantage</div>
-      <div class="comp-delta-val" id="delta-fr">—</div>
-      <div class="comp-delta-sub" id="delta-fr-sub">pp lift vs competitor</div>
-    </div>
-    <div class="comp-delta-card" id="delta-card-fraud">
-      <div class="comp-delta-label">Detection Rate Advantage</div>
-      <div class="comp-delta-val" id="delta-fraud">—</div>
-      <div class="comp-delta-sub" id="delta-fraud-sub">pp lower fraud rate vs competitor</div>
-    </div>
-    <div class="comp-delta-card" id="delta-card-loss">
-      <div class="comp-delta-label">Annual Fraud Loss Saving vs Competitor</div>
-      <div class="comp-delta-val" id="delta-loss">—</div>
-      <div class="comp-delta-sub" id="delta-loss-sub">on annual transaction volume</div>
-    </div>
-    <div class="comp-delta-card" id="delta-card-abandon">
-      <div class="comp-delta-label">Fewer Abandoned Transactions / yr</div>
-      <div class="comp-delta-val" id="delta-abandon">—</div>
-      <div class="comp-delta-sub" id="delta-abandon-sub">from higher frictionless rate</div>
-    </div>
-  </div>
-
-  <!-- SIDE-BY-SIDE METRICS TABLE -->
-  <div style="max-width:1280px;margin:0 auto;padding:0 40px 48px;">
-    <div class="panel">
-      <div class="panel-head">
-        <div class="panel-head-icon">📊</div>
-        <div class="panel-head-title">Side-by-Side Metrics</div>
+    <!-- Delta cards -->
+    <div class="comp-delta-row">
+      <div class="comp-delta-cell" id="delta-card-fr">
+        <div class="comp-delta-cell-label">Frictionless Rate Advantage</div>
+        <div class="comp-delta-cell-val" id="delta-fr">—</div>
+        <div class="comp-delta-cell-sub" id="delta-fr-sub">pp lift vs competitor</div>
       </div>
-      <div style="overflow-x:auto;">
-        <table style="width:100%;border-collapse:collapse;font-size:0.82rem;" id="comp-table">
-          <thead>
-            <tr style="background:rgba(13,34,64,0.8);">
-              <th style="padding:12px 16px;text-align:left;font-family:var(--font-h);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted);border-bottom:1px solid var(--border);">Metric</th>
-              <th style="padding:12px 16px;text-align:right;font-family:var(--font-h);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.07em;color:#f87171;border-bottom:1px solid var(--border);">Competitor</th>
-              <th style="padding:12px 16px;text-align:right;font-family:var(--font-h);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.07em;color:var(--teal);border-bottom:1px solid var(--border);">Outseer</th>
-              <th style="padding:12px 16px;text-align:right;font-family:var(--font-h);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.07em;color:var(--green);border-bottom:1px solid var(--border);">Delta</th>
-            </tr>
-          </thead>
-          <tbody id="comp-table-body"></tbody>
-        </table>
+      <div class="comp-delta-cell" id="delta-card-fraud">
+        <div class="comp-delta-cell-label">Detection Rate Advantage</div>
+        <div class="comp-delta-cell-val" id="delta-fraud">—</div>
+        <div class="comp-delta-cell-sub" id="delta-fraud-sub">pp vs competitor</div>
+      </div>
+      <div class="comp-delta-cell" id="delta-card-loss">
+        <div class="comp-delta-cell-label">Annual Fraud Loss Saving</div>
+        <div class="comp-delta-cell-val" id="delta-loss">—</div>
+        <div class="comp-delta-cell-sub" id="delta-loss-sub">vs competitor</div>
+      </div>
+      <div class="comp-delta-cell" id="delta-card-abandon">
+        <div class="comp-delta-cell-label">Fewer Abandonments / yr</div>
+        <div class="comp-delta-cell-val" id="delta-abandon">—</div>
+        <div class="comp-delta-cell-sub" id="delta-abandon-sub">from higher frictionless rate</div>
       </div>
     </div>
-    <div style="margin-top:16px;padding:14px 18px;background:rgba(0,196,188,0.03);border:1px solid rgba(0,196,188,0.1);border-radius:10px;font-size:0.73rem;color:var(--muted);line-height:1.7;">
-      <strong style="color:var(--white);">Note:</strong> Outseer values are drawn from the main calculator sliders above — change those sliders to update this comparator. Fraud loss calculations use the fraud loss per transaction value set in the main calculator. Annual volume uses the monthly volume × 12 from the transaction profile. All weighted fraud rates are calculated as: <em>(frictionless rate × fraud rate on frictionless) + (challenge rate × fraud rate on challenge)</em>.
-    </div>
-  </div>
 
-</div><!-- end comp-section -->
+    <!-- Side-by-side table -->
+    <div class="comp-table-wrap">
+      <table class="comp-table" id="comp-table">
+        <thead>
+          <tr>
+            <th>Metric</th>
+            <th style="color:var(--red);">Competitor</th>
+            <th style="color:var(--teal);">Outseer</th>
+            <th style="color:var(--green);">Delta</th>
+          </tr>
+        </thead>
+        <tbody id="comp-table-body"></tbody>
+      </table>
+    </div>
+  </div><!-- end comp-section -->
+
+</div><!-- end shell -->
 
 <script>
-// ── Card type presets for interchange rate ──
-// PSD2 caps: consumer debit 0.20%, consumer credit 0.30%.
-// No differential between frictionless and challenged — rate used only for recovered tx value.
+// ── Card type presets ──
 const cardTypeRates = { debit: 0.20, credit: 0.30, mixed: 0.25 };
-
 function cardTypePreset() {
   const t = document.getElementById('roi-card-type').value;
   document.getElementById('roi-ic-standard').value = cardTypeRates[t];
 }
 
+// ── Step accordion ──
+function toggleStep(n) {
+  const card = document.getElementById('step-' + n);
+  card.classList.toggle('active');
+}
+
 // ── Formatters ──
 function fmtGBP(n) {
-  if (n >= 1000000) return '£' + (n / 1000000).toFixed(2) + 'M';
+  if (n >= 1000000) return '£' + (n/1000000).toFixed(2) + 'M';
   if (n >= 1000)    return '£' + Math.round(n).toLocaleString('en-GB');
   return '£' + n.toFixed(0);
 }
 function fmtNum(n) {
-  if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
-  if (n >= 1000)    return (n / 1000).toFixed(0) + 'K';
+  if (n >= 1000000) return (n/1000000).toFixed(1) + 'M';
+  if (n >= 1000)    return (n/1000).toFixed(0) + 'K';
   return Math.round(n).toLocaleString('en-GB');
 }
-
 function flash(id) {
   const el = document.getElementById(id);
   if (!el) return;
@@ -1048,307 +1359,204 @@ function calcROI() {
   const chargebackR = parseFloat(document.getElementById('roi-chargeback').value) / 100;
   const otpSplit    = parseFloat(document.getElementById('roi-otp-split').value) / 100;
   const oobSplit    = 1 - otpSplit;
-  const abandonR    = parseFloat(document.getElementById('roi-abandon').value) / 100;     // OTP abandonment
-  const oobAbandonR = parseFloat(document.getElementById('roi-oob-abandon').value) / 100; // OOB abandonment
-  // Blended abandonment = weighted avg across OTP and OOB channels
+  const abandonR    = parseFloat(document.getElementById('roi-abandon').value) / 100;
+  const oobAbandonR = parseFloat(document.getElementById('roi-oob-abandon').value) / 100;
   const blendedAbandonR = (otpSplit * abandonR) + (oobSplit * oobAbandonR);
   const icStd       = parseFloat(document.getElementById('roi-ic-standard').value) / 100;
-  const fraudPeriod   = parseInt(document.getElementById('roi-fraud-period').value);
-  const confBefore    = parseFloat(document.getElementById('roi-conf-before').value);
-  const missedBefore  = parseFloat(document.getElementById('roi-missed-before').value);
-  const confAfter     = parseFloat(document.getElementById('roi-conf-after').value);
-  const missedAfter   = parseFloat(document.getElementById('roi-missed-after').value);
-  const fraudLoss     = parseFloat(document.getElementById('roi-fraud-loss').value);
-  // ── Derive detection rates from volumes ──
-  const totalFraudBefore  = confBefore + missedBefore;
-  const totalFraudAfter   = confAfter  + missedAfter;
+  const fraudPeriod = parseInt(document.getElementById('roi-fraud-period').value);
+  const confBefore  = parseFloat(document.getElementById('roi-conf-before').value);
+  const missedBefore= parseFloat(document.getElementById('roi-missed-before').value);
+  const confAfter   = parseFloat(document.getElementById('roi-conf-after').value);
+  const missedAfter = parseFloat(document.getElementById('roi-missed-after').value);
+  const fraudLoss   = parseFloat(document.getElementById('roi-fraud-loss').value);
+
+  const totalFraudBefore = confBefore + missedBefore;
+  const totalFraudAfter  = confAfter  + missedAfter;
   const detRateBefore = totalFraudBefore > 0 ? confBefore / totalFraudBefore : 0;
   const detRateAfter  = totalFraudAfter  > 0 ? confAfter  / totalFraudAfter  : 0;
-  // Annualise volumes if period != 12
   const missedBeforeAnn = missedBefore * (12 / fraudPeriod);
   const missedAfterAnn  = missedAfter  * (12 / fraudPeriod);
 
   const effTarget = Math.max(targetFR, currentFR);
 
-  // ── Update input labels ──
-  document.getElementById('v-vol').textContent        = monthlyVol.toLocaleString('en-GB');
-  document.getElementById('v-cur').textContent        = Math.round(currentFR * 100) + '%';
-  document.getElementById('v-tgt').textContent        = Math.round(effTarget * 100) + '%';
-  document.getElementById('v-aov').textContent        = '£' + aov.toFixed(0);
-  document.getElementById('v-review').textContent     = '£' + reviewCost.toFixed(2) + ' / case';
-  document.getElementById('v-sms').textContent        = '£' + smsCost.toFixed(2);
-  document.getElementById('v-dispute').textContent    = '£' + disputeCost.toFixed(0);
-  document.getElementById('v-chargeback').textContent = (chargebackR * 100).toFixed(1) + '%';
-  document.getElementById('v-otp-split').textContent  = Math.round(otpSplit * 100) + '%';
-  document.getElementById('v-oob-pct-label').textContent = Math.round(otpSplit*100) + '% OTP  ·  ' + Math.round(oobSplit*100) + '% OOB push';
-  document.getElementById('v-abandon').textContent    = Math.round(abandonR * 100) + '%';
+  // ── Label updates ──
+  document.getElementById('v-vol').textContent         = monthlyVol.toLocaleString('en-GB');
+  document.getElementById('v-cur').textContent         = Math.round(currentFR * 100) + '%';
+  document.getElementById('v-tgt').textContent         = Math.round(effTarget * 100) + '%';
+  document.getElementById('v-aov').textContent         = '£' + aov.toFixed(0);
+  document.getElementById('v-review').textContent      = '£' + reviewCost.toFixed(2) + ' / case';
+  document.getElementById('v-sms').textContent         = '£' + smsCost.toFixed(2);
+  document.getElementById('v-dispute').textContent     = '£' + disputeCost.toFixed(0);
+  document.getElementById('v-chargeback').textContent  = (chargebackR * 100).toFixed(1) + '%';
+  document.getElementById('v-otp-split').textContent   = Math.round(otpSplit * 100) + '%';
+  document.getElementById('v-oob-pct-label').textContent = Math.round(otpSplit*100) + '% OTP  ·  ' + Math.round(oobSplit*100) + '% OOB push — remainder delivered via mobile banking app push.';
+  document.getElementById('v-abandon').textContent     = Math.round(abandonR * 100) + '%';
   document.getElementById('v-oob-abandon').textContent = Math.round(oobAbandonR * 100) + '%';
-  document.getElementById('v-ic-std').textContent     = (icStd * 100).toFixed(2) + '%';
-  document.getElementById('v-fraud-loss').textContent    = '£' + fraudLoss.toFixed(0);
-  document.getElementById('v-conf-before').textContent   = Math.round(confBefore).toLocaleString('en-GB');
+  document.getElementById('v-ic-std').textContent      = (icStd * 100).toFixed(2) + '%';
+  document.getElementById('v-fraud-loss').textContent  = '£' + fraudLoss.toFixed(0);
+  document.getElementById('v-conf-before').textContent = Math.round(confBefore).toLocaleString('en-GB');
   document.getElementById('v-missed-before').textContent = Math.round(missedBefore).toLocaleString('en-GB');
-  document.getElementById('v-conf-after').textContent    = Math.round(confAfter).toLocaleString('en-GB');
-  document.getElementById('v-missed-after').textContent  = Math.round(missedAfter).toLocaleString('en-GB');
+  document.getElementById('v-conf-after').textContent  = Math.round(confAfter).toLocaleString('en-GB');
+  document.getElementById('v-missed-after').textContent = Math.round(missedAfter).toLocaleString('en-GB');
   document.getElementById('v-total-fraud-before').textContent = Math.round(totalFraudBefore).toLocaleString('en-GB');
   document.getElementById('v-total-fraud-after').textContent  = Math.round(totalFraudAfter).toLocaleString('en-GB');
   document.getElementById('v-det-rate-before').textContent = (detRateBefore * 100).toFixed(1) + '%';
   document.getElementById('v-det-rate-after').textContent  = (detRateAfter  * 100).toFixed(1) + '%';
 
-  // icStd = flat PSD2 interchange rate (debit 0.20% / credit 0.30% / mixed 0.25%)
-  // Used only for recovered transaction value calculation — no differential exists under PSD2
-
   // ── Volume maths ──
-  const annualVol         = monthlyVol * 12;
-  const challengedBefore  = Math.round(annualVol * (1 - currentFR));
-  const frBefore          = annualVol - challengedBefore;
-  const challengedAfter   = Math.round(annualVol * (1 - effTarget));
-  const frAfter           = annualVol - challengedAfter;
-  const shifted           = frAfter - frBefore;
+  const annualVol        = monthlyVol * 12;
+  const challengedBefore = Math.round(annualVol * (1 - currentFR));
+  const frBefore         = annualVol - challengedBefore;
+  const challengedAfter  = Math.round(annualVol * (1 - effTarget));
+  const frAfter          = annualVol - challengedAfter;
+  const shifted          = frAfter - frBefore;
 
   // ── Savings ──
-  // reviewSaved: manual review cost derived from confirmed fraud case volumes.
-  // Confirmed fraud cases = cases created and worked by analysts (from Fraud Detection panel).
-  // Annualise both before and after confirmed case counts using the selected period.
-  const confBeforeAnn   = confBefore * (12 / fraudPeriod);
-  const confAfterAnn    = confAfter  * (12 / fraudPeriod);
-  // Saving = reduction in cases worked × cost per case.
-  // Note: Outseer improves detection rate so confAfter may be higher (more caught),
-  // but the saving here is that frictionless shift reduces the total challenged pool,
-  // so fewer transactions enter the case workflow in the first place.
-  // We use confBeforeAnn as the review rate proxy against the shifted volume.
-  const annualVolCalc   = monthlyVol * 12;
-  const reviewRateDerived = annualVolCalc > 0 ? confBeforeAnn / annualVolCalc : 0;
-  const reviewSaved     = shifted * reviewRateDerived * reviewCost;
+  const confBeforeAnn      = confBefore * (12 / fraudPeriod);
+  const confAfterAnn       = confAfter  * (12 / fraudPeriod);
+  const annualVolCalc      = monthlyVol * 12;
+  const reviewRateDerived  = annualVolCalc > 0 ? confBeforeAnn / annualVolCalc : 0;
+  const reviewSaved        = shifted * reviewRateDerived * reviewCost;
   document.getElementById('v-review-derived').textContent =
-    `${fmtNum(Math.round(confBeforeAnn))} confirmed cases/yr  ·  ${(reviewRateDerived*100).toFixed(2)}% of annual volume`;
-  // smsSaved: OTP/SMS cost applies only to the OTP portion of challenges.
-  // OOB push delivery (APNS/FCM) has near-zero marginal cost.
-  const otpTxns     = shifted * otpSplit;   // txns previously challenged via OTP
-  const oobTxns     = shifted * oobSplit;   // txns previously challenged via OOB
-  const smsSaved    = otpTxns * smsCost;
-  // disputeSaved: inbound fraud claim processing cost avoided.
-  // Under PSD2/UK SCA, ALL in-scope txns are ECI05/02 (authenticated or exempted).
-  // The saving is from concentrating fraud into the step-up pool:
-  // step-up challenged ECI05/02 txns generate more inbound fraud claims per tx than
-  // Outseer frictionless ECI05/02 txns (because Outseer pre-filters risky txns to challenge).
-  // Saving = shifted txns x inbound claim rate x processing cost per case.
-  const reviewableChallenged = challengedAfter; // remaining challenged pool for context
+    fmtNum(Math.round(confBeforeAnn)) + ' confirmed cases/yr  ·  ' + (reviewRateDerived*100).toFixed(2) + '% of annual volume';
+
+  const otpTxns   = shifted * otpSplit;
+  const oobTxns   = shifted * oobSplit;
+  const smsSaved  = otpTxns * smsCost;
   const disputeSaved = shifted * chargebackR * disputeCost;
-  // revRecov: for the issuer, the value of recovering abandoned transactions is the
-  // interchange income earned on those transactions, not the full AOV (which is merchant revenue).
-  // A transaction abandoned at the challenge screen generates zero interchange for the issuer.
-  // Recovering it as frictionless generates: abandonRate × AOV × interchange rate.
-  // Recovered txns = transactions previously abandoned at challenge screen (OTP or OOB)
-  // Use blended abandonment rate weighted across OTP and OOB splits
-  const recoveredTxns    = shifted * blendedAbandonR;     // transactions no longer lost
-  const recoveredTxValue = recoveredTxns * aov;           // transaction value recovered
-  const revRecov         = recoveredTxValue * icStd;      // issuer interchange income on those txns
-  // No interchange differential saving — PSD2 caps eliminate it for consumer cards
-  // fraudSaved: saving from improving fraud detection rate.
-  // Detection Rate = confirmed fraud (case-marked) / (confirmed + missed fraud via repudiation/chargeback)
-  // Missed fraud = fraud the system did NOT catch, discovered via cardholder repudiation / chargeback file.
-  // The saving = reduction in missed fraud cases × fraud loss per missed transaction.
-  // Both volumes are annualised (× 12/period) for consistent comparison.
+  const recoveredTxns    = shifted * blendedAbandonR;
+  const recoveredTxValue = recoveredTxns * aov;
+  const revRecov         = recoveredTxValue * icStd;
   const missedFraudSaved   = Math.max(0, missedBeforeAnn - missedAfterAnn);
   const fraudSaved         = missedFraudSaved * fraudLoss;
-  const remainingMissedAnn = missedAfterAnn;
-  const remainingFraudLoss = remainingMissedAnn * fraudLoss;
-  const total        = reviewSaved + smsSaved + disputeSaved + revRecov + fraudSaved;
-  const perTx        = shifted > 0 ? total / shifted : 0;
-  const frLift       = Math.round((effTarget - currentFR) * 100);
+  const remainingFraudLoss = missedAfterAnn * fraudLoss;
+  const total   = reviewSaved + smsSaved + disputeSaved + revRecov + fraudSaved;
+  const perTx   = shifted > 0 ? total / shifted : 0;
+  const frLift  = Math.round((effTarget - currentFR) * 100);
 
-  // ── Hero total ──
-  const heroEl = document.getElementById('hero-total');
-  heroEl.textContent = fmtGBP(total);
+  // ── Hero ──
+  document.getElementById('hero-total').textContent = fmtGBP(total);
   flash('hero-total');
 
-  // ── Stats strip ──
-  document.getElementById('s-shifted').textContent  = fmtNum(shifted);
-  document.getElementById('s-lift').textContent     = (frLift > 0 ? '+' : '') + frLift + ' pp';
-  document.getElementById('s-revenue').textContent  = fmtGBP(revRecov);
-  document.getElementById('s-pertx').textContent    = '£' + perTx.toFixed(3);
+  // ── KPI strip ──
+  document.getElementById('s-shifted').textContent = fmtNum(shifted);
+  document.getElementById('s-lift').textContent    = (frLift > 0 ? '+' : '') + frLift + ' pp';
+  document.getElementById('s-pertx').textContent   = '£' + perTx.toFixed(3);
+  document.getElementById('s-revenue').textContent = fmtGBP(revRecov);
 
-  // ── Breakdown rows ──
-  const rows = [
-    { id: 'review',  amt: reviewSaved,  sub: `${fmtNum(Math.round(shifted * reviewRateDerived))} cases reviewed (${(reviewRateDerived*100).toFixed(2)}% case rate from ${fmtNum(Math.round(confBeforeAnn))} confirmed fraud cases / ${fmtNum(Math.round(annualVolCalc))} annual vol) × £${reviewCost.toFixed(2)}/case` },
-    { id: 'sms',     amt: smsSaved,     sub: `${fmtNum(Math.round(otpTxns))} fewer OTP challenges (${Math.round(otpSplit*100)}% of ${fmtNum(shifted)}) × £${smsCost.toFixed(2)}/SMS — OOB push (${Math.round(oobSplit*100)}%) has no SMS cost` },
-    { id: 'dispute', amt: disputeSaved, sub: `${fmtNum(Math.round(shifted * chargebackR))} fewer inbound fraud claims to investigate — ECI 05/02 txns carry no issuer dispute rights vs merchant × £${disputeCost.toFixed(0)}/case` },
-    { id: 'abandon', amt: revRecov,     sub: `${fmtNum(Math.round(recoveredTxns))} recovered txns (OTP ${Math.round(abandonR*100)}% + OOB ${Math.round(oobAbandonR*100)}% abandon, blended ${(blendedAbandonR*100).toFixed(1)}%) × AOV £${aov.toFixed(0)} × ${(icStd*100).toFixed(2)}% interchange` },
-    { id: 'fraud',   amt: fraudSaved,  sub: `Detection rate ${(detRateBefore*100).toFixed(1)}% → ${(detRateAfter*100).toFixed(1)}% — ${fmtNum(Math.round(missedFraudSaved))} fewer missed fraud cases/yr × £${fraudLoss.toFixed(0)}/missed case` },
+  // ── Breakdown ──
+  const bdRows = [
+    { id:'review',  amt:reviewSaved,  sub:`${fmtNum(Math.round(shifted*reviewRateDerived))} cases (${(reviewRateDerived*100).toFixed(2)}% rate from ${fmtNum(Math.round(confBeforeAnn))} confirmed/yr) × £${reviewCost.toFixed(2)}` },
+    { id:'sms',     amt:smsSaved,     sub:`${fmtNum(Math.round(otpTxns))} OTP txns (${Math.round(otpSplit*100)}%) × £${smsCost.toFixed(2)}/SMS — OOB ${Math.round(oobSplit*100)}% zero cost` },
+    { id:'dispute', amt:disputeSaved, sub:`${fmtNum(Math.round(shifted*chargebackR))} claims avoided × £${disputeCost.toFixed(0)}/case` },
+    { id:'abandon', amt:revRecov,     sub:`${fmtNum(Math.round(recoveredTxns))} recovered txns (blended ${(blendedAbandonR*100).toFixed(1)}% abandon) × £${aov.toFixed(0)} × ${(icStd*100).toFixed(2)}%` },
+    { id:'fraud',   amt:fraudSaved,   sub:`${fmtNum(Math.round(missedFraudSaved))} fewer missed cases/yr — ${(detRateBefore*100).toFixed(1)}% → ${(detRateAfter*100).toFixed(1)}% detection rate × £${fraudLoss.toFixed(0)}` },
   ];
-
-  rows.forEach(r => {
+  bdRows.forEach(r => {
     document.getElementById('bd-' + r.id).textContent     = fmtGBP(r.amt);
     document.getElementById('bd-sub-' + r.id).textContent = r.sub;
     flash('bd-' + r.id);
   });
-
-  document.getElementById('bd-total').textContent     = fmtGBP(total);
-  document.getElementById('bd-sub-total').textContent = `${fmtNum(shifted)} transactions shifted  ·  +${frLift} pp frictionless lift`;
+  document.getElementById('bd-total').textContent = fmtGBP(total);
   flash('bd-total');
 
-  // ── Fraud highlight card ──
-  const fraudPct = total > 0 ? Math.round(fraudSaved / total * 100) : 0;
-  document.getElementById('fraud-h-saving').textContent    = fmtGBP(fraudSaved);
-  document.getElementById('fraud-h-pct').textContent       = fraudPct + '% of total saving';
-  document.getElementById('fraud-h-rate').textContent      = (detRateBefore*100).toFixed(1) + '% → ' + (detRateAfter*100).toFixed(1) + '%';
-  document.getElementById('fraud-h-rate-after').textContent = (detRateAfter*100).toFixed(1) + '% detection rate with Outseer';
-  document.getElementById('fraud-h-txns').textContent      = fmtNum(Math.round(missedFraudSaved)) + ' cases/yr';
-  document.getElementById('fraud-h-txns-sub').textContent  = 'missed fraud cases avoided annually';
-  document.getElementById('fraud-h-remaining').textContent  = fmtGBP(remainingFraudLoss);
-  flash('fraud-h-saving');
+  // ── Detection rate card ──
+  document.getElementById('fraud-h-rate').textContent     = (detRateBefore*100).toFixed(1) + '%';
+  document.getElementById('fraud-h-rate-after').textContent = (detRateAfter*100).toFixed(1) + '%';
+  document.getElementById('fraud-h-txns').textContent     = fmtNum(Math.round(missedFraudSaved)) + ' cases/yr';
+  document.getElementById('fraud-h-remaining').textContent = fmtGBP(remainingFraudLoss);
+  document.getElementById('det-bar-before').style.width   = (detRateBefore*100).toFixed(1) + '%';
+  document.getElementById('det-bar-after').style.width    = (detRateAfter*100).toFixed(1) + '%';
 
-  // ── Bar chart ──
-  const bars = [
-    { label: 'Frictionless — Before Outseer', val: frBefore,         max: annualVol, color: 'var(--teal-d)',            bg: 'rgba(0,143,137,0.12)' },
-    { label: 'Frictionless — After Outseer',  val: frAfter,          max: annualVol, color: 'var(--teal)',              bg: 'rgba(0,196,188,0.1)'  },
-    { label: 'Challenged — Before Outseer',   val: challengedBefore, max: annualVol, color: 'var(--amber)',             bg: 'rgba(245,158,11,0.1)' },
-    { label: 'Challenged — After Outseer',    val: challengedAfter,  max: annualVol, color: 'rgba(245,158,11,0.35)',    bg: 'rgba(245,158,11,0.04)'},
-  ];
-
-  document.getElementById('chart-rows').innerHTML = bars.map(b => `
-    <div class="bar-row">
-      <div class="bar-header">
-        <span class="bar-name">${b.label}</span>
-        <span class="bar-count">${fmtNum(b.val)}</span>
-      </div>
-      <div class="bar-track" style="background:${b.bg}">
-        <div class="bar-fill" style="width:${Math.min(100,Math.round(b.val/b.max*100))}%;background:${b.color}"></div>
-      </div>
-    </div>
-  `).join('');
+  syncComp();
 }
 
-// ═══════════════════════════════════════════════
-//  COMPETITOR COMPARATOR
-// ═══════════════════════════════════════════════
+// ── Competitor comparator ──
 function calcComp() {
-  // Read competitor inputs
-  const compFR      = parseFloat(document.getElementById('comp-fr').value) / 100;
-  const compConfBefore  = parseFloat(document.getElementById('comp-conf').value);
-  const compMissedBefore= parseFloat(document.getElementById('comp-missed').value);
-
-  // Read Outseer values from main calculator state (detection rate model)
+  const compFR           = parseFloat(document.getElementById('comp-fr').value) / 100;
+  const compConfBefore   = parseFloat(document.getElementById('comp-conf').value);
+  const compMissedBefore = parseFloat(document.getElementById('comp-missed').value);
   const monthlyVol  = parseInt(document.getElementById('roi-vol').value);
   const osFR        = Math.max(
     parseFloat(document.getElementById('roi-current-fr').value),
     parseFloat(document.getElementById('roi-target-fr').value)
   ) / 100;
-  const fraudPeriod   = parseInt(document.getElementById('roi-fraud-period').value);
-  const confBefore    = parseFloat(document.getElementById('roi-conf-before').value);
-  const missedBefore  = parseFloat(document.getElementById('roi-missed-before').value);
-  const confAfter     = parseFloat(document.getElementById('roi-conf-after').value);
-  const missedAfter   = parseFloat(document.getElementById('roi-missed-after').value);
+  const fraudPeriod = parseInt(document.getElementById('roi-fraud-period').value);
+  const confBefore  = parseFloat(document.getElementById('roi-conf-before').value);
+  const missedBefore= parseFloat(document.getElementById('roi-missed-before').value);
+  const confAfter   = parseFloat(document.getElementById('roi-conf-after').value);
+  const missedAfter = parseFloat(document.getElementById('roi-missed-after').value);
   const fraudLoss   = parseFloat(document.getElementById('roi-fraud-loss').value);
   const aov         = parseFloat(document.getElementById('roi-aov').value);
-  const otpSplit    = parseFloat(document.getElementById('roi-otp-split').value) / 100;
-  const oobSplit    = 1 - otpSplit;
-  const abandonR    = parseFloat(document.getElementById('roi-abandon').value) / 100;     // OTP abandonment
-  const oobAbandonR = parseFloat(document.getElementById('roi-oob-abandon').value) / 100; // OOB abandonment
-  // Blended abandonment = weighted avg across OTP and OOB channels
-  const blendedAbandonR = (otpSplit * abandonR) + (oobSplit * oobAbandonR);
+  const abandonR    = parseFloat(document.getElementById('roi-abandon').value) / 100;
   const annualVol   = monthlyVol * 12;
 
-  // Detection rates — Outseer (from main calc)
   const totalFraudBefore = confBefore + missedBefore;
   const totalFraudAfter  = confAfter  + missedAfter;
-  const osDetRate  = totalFraudAfter  > 0 ? confAfter  / totalFraudAfter  : 0;
-  const baseDetRate= totalFraudBefore > 0 ? confBefore / totalFraudBefore : 0;
-  // Annualised missed fraud
-  const missedAfterAnn   = missedAfter  * (12 / fraudPeriod);
+  const osDetRate   = totalFraudAfter  > 0 ? confAfter  / totalFraudAfter  : 0;
+  const baseDetRate = totalFraudBefore > 0 ? confBefore / totalFraudBefore : 0;
+  const missedAfterAnn = missedAfter * (12 / fraudPeriod);
 
-  // Competitor detection rate from its own inputs
-  const compTotal  = compConfBefore + compMissedBefore;
-  const compDetRate= compTotal > 0 ? compConfBefore / compTotal : 0;
-  // Annualise competitor missed fraud to match period
+  const compTotal   = compConfBefore + compMissedBefore;
+  const compDetRate = compTotal > 0 ? compConfBefore / compTotal : 0;
   const compMissedAnn = compMissedBefore * (12 / fraudPeriod);
 
-  // Update display labels
-  document.getElementById('v-comp-fr').textContent           = Math.round(compFR * 100) + '%';
-  document.getElementById('v-comp-conf').textContent         = Math.round(compConfBefore).toLocaleString('en-GB');
-  document.getElementById('v-comp-missed').textContent       = Math.round(compMissedBefore).toLocaleString('en-GB');
-  document.getElementById('v-comp-det-rate').textContent     = (compDetRate * 100).toFixed(1) + '%';
-  document.getElementById('v-os-fr').textContent             = Math.round(osFR * 100) + '%';
-  document.getElementById('v-os-det-rate').textContent       = (osDetRate * 100).toFixed(1) + '%';
-  document.getElementById('v-os-base-det-rate').textContent  = (baseDetRate * 100).toFixed(1) + '%';
-  if (document.getElementById('v-os-missed-ann')) document.getElementById('v-os-missed-ann').textContent = fmtNum(Math.round(missedAfterAnn)) + ' cases/yr';
+  document.getElementById('v-comp-fr').textContent          = Math.round(compFR*100) + '%';
+  document.getElementById('v-comp-conf').textContent        = Math.round(compConfBefore).toLocaleString('en-GB');
+  document.getElementById('v-comp-missed').textContent      = Math.round(compMissedBefore).toLocaleString('en-GB');
+  document.getElementById('v-comp-det-rate').textContent    = (compDetRate*100).toFixed(1) + '%';
+  document.getElementById('v-os-fr').textContent            = Math.round(osFR*100) + '%';
+  document.getElementById('v-os-det-rate').textContent      = (osDetRate*100).toFixed(1) + '%';
+  document.getElementById('v-os-base-det-rate').textContent = (baseDetRate*100).toFixed(1) + '%';
+  if (document.getElementById('v-os-missed-ann'))
+    document.getElementById('v-os-missed-ann').textContent  = fmtNum(Math.round(missedAfterAnn)) + ' cases/yr';
 
-  // Deltas — frictionless rate
-  const frDelta = Math.round((osFR - compFR) * 100);
+  const frDelta        = Math.round((osFR - compFR) * 100);
+  const detRateDelta   = (osDetRate - compDetRate) * 100;
+  const annualLossComp = compMissedAnn  * fraudLoss;
+  const annualLossOS   = missedAfterAnn * fraudLoss;
+  const fraudLossDelta = annualLossComp - annualLossOS;
+  const compAbandoned  = annualVol * (1 - compFR) * abandonR;
+  const osAbandoned    = annualVol * (1 - osFR)   * abandonR;
+  const abandonDelta   = Math.round(compAbandoned - osAbandoned);
 
-  // Deltas — detection rate (Outseer vs competitor)
-  const detRateDelta    = (osDetRate - compDetRate) * 100;   // pp, positive = Outseer better
-  // Fraud loss: missed fraud × loss per tx, annualised
-  const annualFraudLossComp = compMissedAnn  * fraudLoss;
-  const annualFraudLossOS   = missedAfterAnn * fraudLoss;
-  const fraudLossDelta      = annualFraudLossComp - annualFraudLossOS;  // positive = Outseer saves
-
-  const compAbandonedTxns = annualVol * (1 - compFR) * abandonR;
-  const osAbandonedTxns   = annualVol * (1 - osFR)   * abandonR;
-  const abandonDelta      = Math.round(compAbandonedTxns - osAbandonedTxns);
-
-  // Delta cards
-  function setDeltaCard(cardId, valId, subId, val, valFmt, sub, positive) {
+  function setDelta(cardId, valId, subId, val, valFmt, sub, positive) {
     const card = document.getElementById(cardId);
-    const valEl = document.getElementById(valId);
-    card.className = 'comp-delta-card ' + (positive ? 'positive' : 'negative');
-    valEl.className = 'comp-delta-val ' + (positive ? 'positive' : 'negative');
+    const valEl= document.getElementById(valId);
+    card.className = 'comp-delta-cell ' + (positive ? 'positive' : 'negative');
+    valEl.className= 'comp-delta-cell-val ' + (positive ? 'positive' : 'negative');
     valEl.textContent = valFmt;
     document.getElementById(subId).textContent = sub;
   }
+  setDelta('delta-card-fr',    'delta-fr',    'delta-fr-sub',    frDelta,      (frDelta>=0?'+':'')+frDelta+' pp',                             'frictionless rate vs competitor',      frDelta>=0);
+  setDelta('delta-card-fraud', 'delta-fraud', 'delta-fraud-sub', detRateDelta, (detRateDelta>=0?'+':'')+detRateDelta.toFixed(1)+' pp',         'detection rate vs competitor',         detRateDelta>=0);
+  setDelta('delta-card-loss',  'delta-loss',  'delta-loss-sub',  fraudLossDelta,fmtGBP(Math.abs(fraudLossDelta)),                             fraudLossDelta>=0?'fraud loss saving':'higher fraud loss', fraudLossDelta>=0);
+  setDelta('delta-card-abandon','delta-abandon','delta-abandon-sub',abandonDelta,fmtNum(Math.abs(abandonDelta)),                               abandonDelta>=0?'fewer abandonments/yr':'more abandonments', abandonDelta>=0);
 
-  setDeltaCard('delta-card-fr',    'delta-fr',    'delta-fr-sub',
-    frDelta, (frDelta >= 0 ? '+' : '') + frDelta + ' pp',
-    'frictionless rate vs competitor',
-    frDelta >= 0);
-
-  setDeltaCard('delta-card-fraud', 'delta-fraud', 'delta-fraud-sub',
-    detRateDelta,
-    (detRateDelta >= 0 ? '+' : '') + detRateDelta.toFixed(1) + ' pp',
-    'fraud detection rate vs competitor',
-    detRateDelta >= 0);
-
-  setDeltaCard('delta-card-loss',  'delta-loss',  'delta-loss-sub',
-    fraudLossDelta, fmtGBP(Math.abs(fraudLossDelta)),
-    fraudLossDelta >= 0 ? 'annual fraud loss saved vs competitor' : 'higher annual fraud loss vs competitor',
-    fraudLossDelta >= 0);
-
-  setDeltaCard('delta-card-abandon','delta-abandon','delta-abandon-sub',
-    abandonDelta, fmtNum(Math.abs(abandonDelta)),
-    abandonDelta >= 0 ? 'fewer abandoned txns vs competitor / yr' : 'more abandoned txns vs competitor / yr',
-    abandonDelta >= 0);
-
-  // Side-by-side table
   const rows = [
-    ['Frictionless Rate',              Math.round(compFR*100) + '%',                         Math.round(osFR*100) + '%',                (frDelta >= 0 ? '+' : '') + frDelta + ' pp'],
-    ['Step-Up Challenge Rate',         Math.round((1-compFR)*100) + '%',                     Math.round((1-osFR)*100) + '%',            (frDelta >= 0 ? '-' : '+') + Math.abs(frDelta) + ' pp'],
-    ['Fraud Detection Rate',           (compDetRate*100).toFixed(1) + '%',                   (osDetRate*100).toFixed(1) + '%',          (detRateDelta >= 0 ? '+' : '') + detRateDelta.toFixed(1) + ' pp'],
-    ['Confirmed Fraud Cases / yr',     fmtNum(Math.round(compMissedBefore*(12/fraudPeriod)+compConfBefore*(12/fraudPeriod))), fmtNum(Math.round((confAfter+missedAfter)*(12/fraudPeriod))), '—'],
-    ['Missed Fraud Cases / yr',        fmtNum(Math.round(compMissedAnn)),                    fmtNum(Math.round(missedAfterAnn)),        fmtNum(Math.abs(Math.round(compMissedAnn - missedAfterAnn))) + (compMissedAnn > missedAfterAnn ? ' fewer' : ' more')],
-    ['Annual Missed Fraud Loss',       fmtGBP(annualFraudLossComp),                          fmtGBP(annualFraudLossOS),                 fmtGBP(Math.abs(fraudLossDelta)) + (fraudLossDelta >= 0 ? ' saving' : ' extra')],
-    ['Challenge Abandonments / yr',   fmtNum(Math.round(compAbandonedTxns)),                fmtNum(Math.round(osAbandonedTxns)),       fmtNum(Math.abs(abandonDelta)) + (abandonDelta >= 0 ? ' fewer' : ' more')],
+    ['Frictionless Rate',         Math.round(compFR*100)+'%',           Math.round(osFR*100)+'%',              (frDelta>=0?'+':'')+frDelta+' pp'],
+    ['Fraud Detection Rate',      (compDetRate*100).toFixed(1)+'%',     (osDetRate*100).toFixed(1)+'%',        (detRateDelta>=0?'+':'')+detRateDelta.toFixed(1)+' pp'],
+    ['Missed Fraud Cases / yr',   fmtNum(Math.round(compMissedAnn)),    fmtNum(Math.round(missedAfterAnn)),    fmtNum(Math.abs(Math.round(compMissedAnn-missedAfterAnn)))+(compMissedAnn>missedAfterAnn?' fewer':' more')],
+    ['Annual Missed Fraud Loss',  fmtGBP(annualLossComp),               fmtGBP(annualLossOS),                  fmtGBP(Math.abs(fraudLossDelta))+(fraudLossDelta>=0?' saving':' extra')],
+    ['Challenge Abandonments/yr', fmtNum(Math.round(compAbandoned)),    fmtNum(Math.round(osAbandoned)),       fmtNum(Math.abs(abandonDelta))+(abandonDelta>=0?' fewer':' more')],
   ];
 
-  const tbody = document.getElementById('comp-table-body');
-  tbody.innerHTML = rows.map((r, i) => {
-    const isPositive = i === 0 ? frDelta >= 0
-                     : i === 1 ? frDelta >= 0
-                     : i === 2 ? detRateDelta >= 0
-                     : i === 3 ? true
-                     : i === 4 ? compMissedAnn >= missedAfterAnn
-                     : i === 5 ? fraudLossDelta >= 0
-                     : abandonDelta >= 0;
-    const bg = i % 2 === 0 ? 'rgba(255,255,255,0.015)' : 'transparent';
-    return `<tr style="background:${bg}">
-      <td style="padding:10px 16px;color:var(--muted);border-bottom:1px solid rgba(255,255,255,0.04);">${r[0]}</td>
-      <td style="padding:10px 16px;text-align:right;font-family:var(--font-m);color:#f87171;border-bottom:1px solid rgba(255,255,255,0.04);">${r[1]}</td>
-      <td style="padding:10px 16px;text-align:right;font-family:var(--font-m);color:var(--teal);border-bottom:1px solid rgba(255,255,255,0.04);">${r[2]}</td>
-      <td style="padding:10px 16px;text-align:right;font-family:var(--font-m);font-weight:600;color:${isPositive ? 'var(--green)' : 'var(--red)'};border-bottom:1px solid rgba(255,255,255,0.04);">${r[3]}</td>
-    </tr>`;
-  }).join('');
+  const posMap = [frDelta>=0, detRateDelta>=0, compMissedAnn>=missedAfterAnn, fraudLossDelta>=0, abandonDelta>=0];
+  document.getElementById('comp-table-body').innerHTML = rows.map((r, i) =>
+    `<tr>
+      <td>${r[0]}</td>
+      <td class="td-rival">${r[1]}</td>
+      <td class="td-os">${r[2]}</td>
+      <td class="${posMap[i]?'td-pos':'td-neg'}">${r[3]}</td>
+    </tr>`
+  ).join('');
 }
 
-// Both called directly — script is at end of body so full DOM is available
+function syncComp() {
+  try { calcComp(); } catch(e) { console.warn('calcComp:', e); }
+}
+
+// ── Init ──
 calcROI();
 calcComp();
 </script>
