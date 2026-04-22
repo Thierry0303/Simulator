@@ -1591,33 +1591,38 @@ function syncComp() {
 // ── Init ──
 calcROI();
 calcComp();
-</script>
-
+<script>
 function generatePDF() {
-  // 1. Select the element to print
+  // Use 'is-printing' to force all steps open in the CSS
+  document.body.classList.add('is-printing');
+
   const element = document.querySelector('.shell');
   
-  // 2. Configure the PDF options
   const opt = {
-    margin:       [10, 10, 10, 10],
-    filename:     'Outseer_ROI_Analysis.pdf',
+    margin:       [10, 5, 10, 5],
+    filename:     'Outseer_ROI_Report.pdf',
     image:        { type: 'jpeg', quality: 0.98 },
     html2canvas:  { 
-      scale: 2, // Higher scale = better resolution for logos/text
+      scale: 2, 
       useCORS: true, 
+      logging: false,
       letterRendering: true 
     },
     jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
   };
 
-  // 3. Run the conversion
-  // We add a class to the body temporarily to handle "Print-Only" styling
-  document.body.classList.add('is-printing');
-  
+  // Run the generator
   html2pdf().set(opt).from(element).save().then(() => {
+    // Remove the printing class so the UI returns to normal
     document.body.classList.remove('is-printing');
   });
 }
 
+// Your existing toggleStep function (keep this if you have it)
+function toggleStep(stepNum) {
+  const card = document.getElementById('step-' + stepNum);
+  card.classList.toggle('active');
+}
+</script>
 </body>
 </html>
