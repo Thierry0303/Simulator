@@ -761,7 +761,24 @@ select.field-select:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgb
   nav { padding: 0 16px; }
   .comp-delta-row { grid-template-columns: 1fr 1fr; }
 }
+
+@media print {
+  /* Prevent cards from being split in half */
+  .step-card, .result-hero, .kpi-strip, .breakdown-card, .comp-col-card {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Force a clean break before the Competitor Analysis section */
+  .comp-section {
+    page-break-before: always !important;
+    break-before: always !important;
+    margin-top: 20px !important;
+  }
+}
+
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
 
@@ -771,6 +788,11 @@ select.field-select:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgb
     <div class="nav-logo">OS</div>
     <span class="nav-name">Outseer</span>
   </a>
+
+<button onclick="generatePDF()" style="margin-left: auto; background: var(--teal); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; font-family: var(--font);">
+  Download PDF Report
+</button>
+
   <span class="nav-badge">3DS ROI Calculator</span>
 </nav>
 
@@ -1541,19 +1563,57 @@ function calcComp() {
     ['Challenge Abandonments/yr', fmtNum(Math.round(compAbandoned)),    fmtNum(Math.round(osAbandoned)),       fmtNum(Math.abs(abandonDelta))+(abandonDelta>=0?' fewer':' more')],
   ];
 
-  const posMap = [frDelta>=0, detRateDelta>=0, compMissedAnn>=missedAfterAnn, fraudLossDelta>=0, abandonDelta>=0];
-  document.getElementById('comp-table-body').innerHTML = rows.map((r, i) =>
-    `<tr>
-      <td>${r[0]}</td>
-      <td class="td-rival">${r[1]}</td>
-      <td class="td-os">${r[2]}</td>
-      <td class="${posMap[i]?'td-pos':'td-neg'}">${r[3]}</td>
-    </tr>`
-  ).join('');
+ const posMap = [frDelta>=0, detRateDelta>=0, compMissedAnn>=missedAfterAnn, fraudLossDelta>=0, abandonDelta>=0];
+  
+  const tableBody = document.getElementById('comp-table-body');
+  if (tableBody) {
+    tableBody.innerHTML = rows.map((r, i) =>
+      `<tr>
+        <td>${r[0]}</td>
+        <td class="td-rival">${r[1]}</td>
+        <td class="td-os">${r[2]}</td>
+        <td class="${posMap[i]?'td-pos':'td-neg'}">${r[3]}</td>
+      </tr>`
+    ).join('');
+  }
 }
 
 function syncComp() {
-  try { calcComp(); } catch(e) { console.warn('calcComp:', e); }
+  try { 
+    calcComp(); 
+  } catch(e) { 
+    console.warn('calcComp error:', e); 
+  }
+}
+
+// ── PDF GENERATION ──
+function generatePDF() {
+  const element = document.querySelector('.shell');
+  if (!element) {
+    alert("Error: Could not find the calculator content.");
+    return;
+  }
+
+  document.body.classList.add('is-printing');
+
+ const opt = {
+    margin: [10, 5, 10, 5],
+    filename: 'Outseer_ROI_Report.pdf',
+    image: { type: 'jpeg', quality: 0.98 },
+    pagebreak: { 
+      mode: ['avoid-all', 'css', 'legacy'], 
+      before: '.comp-section' // This forces the comparison table to start on a new page
+    },
+    html2canvas: { scale: 2, useCORS: true, letterRendering: true },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
+  };
+
+  html2pdf().set(opt).from(element).save().then(() => {
+    document.body.classList.remove('is-printing');
+  }).catch(err => {
+    console.error("PDF Error:", err);
+    document.body.classList.remove('is-printing');
+  });
 }
 
 // ── Init ──
